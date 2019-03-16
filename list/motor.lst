@@ -1,0 +1,82 @@
+C51 COMPILER V9.56.0.0   MOTOR                                                             03/16/2019 15:14:59 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MOTOR
+OBJECT MODULE PLACED IN .\list\motor.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE hal\motor.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\l
+                    -ist\motor.lst) TABS(2) OBJECT(.\list\motor.obj)
+
+line level    source
+
+   1          #include "common.h"
+   2          #include "motor.h"
+   3          #include "pinCtl.h"
+   4          static s_MotorParam G_MotorParam;
+   5          
+   6          int8 initMotors(s_MotorParam *param)
+   7          {
+   8   1        int8 i=0;
+   9   1        
+  10   1        if(!param){
+  11   2           return -1;
+  12   2        }
+  13   1      
+  14   1        if(param->MotorNum >= MAX_MOTOR){
+  15   2           return -1;
+  16   2        }
+  17   1        G_MotorParam.MotorNum = param->MotorNum;
+  18   1      
+  19   1        for(i=0; i<param->MotorNum; i++)
+  20   1        {
+  21   2            pinMode_common(param->Motor[i].MotorPinLeft, OUTPUT);
+  22   2            pinMode_common(param->Motor[i].MotorPinRight, OUTPUT);
+  23   2            G_MotorParam.Motor[i].MotorPinLeft = param->Motor[i].MotorPinLeft;
+  24   2            G_MotorParam.Motor[i].MotorPinRight = param->Motor[i].MotorPinRight;
+  25   2        }
+  26   1        
+  27   1        return 0;
+  28   1      }
+  29          
+  30          
+  31          int8 SetMotorSatus(MOTOR motor, MOTOR_STUTAS motorStatus)
+  32          {
+  33   1      
+  34   1          switch(motorStatus){
+  35   2            case MOTOR_STOP:
+  36   2            {
+  37   3              digitalWrite_common(G_MotorParam.Motor[motor].MotorPinLeft, 0);
+  38   3              digitalWrite_common(G_MotorParam.Motor[motor].MotorPinRight, 0);
+  39   3              break;  
+  40   3            }
+  41   2            case MOTOR_CLOCKWISE:
+  42   2            {
+  43   3              digitalWrite_common(G_MotorParam.Motor[motor].MotorPinLeft, 1);
+  44   3              digitalWrite_common(G_MotorParam.Motor[motor].MotorPinRight, 0);
+  45   3              break;  
+  46   3            }
+  47   2            case MOTOR_ANTICLOCKWISE:
+  48   2            {
+  49   3              digitalWrite_common(G_MotorParam.Motor[motor].MotorPinLeft, 0);
+  50   3              digitalWrite_common(G_MotorParam.Motor[motor].MotorPinRight, 1);
+  51   3              break;  
+  52   3            }
+  53   2          }
+  54   1        
+C51 COMPILER V9.56.0.0   MOTOR                                                             03/16/2019 15:14:59 PAGE 2   
+
+  55   1        return 0;
+  56   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    384    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      5       5
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

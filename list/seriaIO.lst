@@ -1,0 +1,27 @@
+C51 COMPILER V9.56.0.0   SERIAIO                                                           03/14/2019 22:59:21 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SERIAIO
+OBJECT MODULE PLACED IN .\list\seriaIO.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE hal\seriaIO.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\
+                    -seriaIO.lst) TABS(2) OBJECT(.\list\seriaIO.obj)
+
+line level    source
+
+   1          #include "serialIO.h"
+*** WARNING C318 IN LINE 1 OF hal\seriaIO.c: can't open file 'serialIO.h'
+   2          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

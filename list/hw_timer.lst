@@ -1,0 +1,136 @@
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/16/2019 17:05:26 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_TIMER
+OBJECT MODULE PLACED IN .\list\hw_timer.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\51\hw_timer.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND 
+                    -PRINT(.\list\hw_timer.lst) TABS(2) OBJECT(.\list\hw_timer.obj)
+
+line level    source
+
+   1          
+   2          /*------------------------------------------------------------------*/
+   3          /* --- STC MCU International Limited -------------------------------*/
+   4          /* --- STC 1T Series MCU RC Demo -----------------------------------*/
+   5          /* --- Mobile: (86)13922805190 -------------------------------------*/
+   6          /* --- Fax: 86-0513-55012956,55012947,55012969 ---------------------*/
+   7          /* --- Tel: 86-0513-55012928,55012929,55012966 ---------------------*/
+   8          /* --- Web: www.GXWMCU.com -----------------------------------------*/
+   9          /* --- QQ:  800003751 ----------------------------------------------*/
+  10          /* If you want to use the program or the program referenced in the  */
+  11          /* article, please specify in which data and procedures from STC    */
+  12          /*------------------------------------------------------------------*/
+  13          
+  14          /*************  功能说明  **************
+  15          
+  16          本文件为STC8xxx系列的端口初始化程序,用户几乎可以不修改这个程序.
+  17          
+  18          
+  19          ******************************************/
+  20          #include "hal/timer.h"
+  21          #include "hw_timer.h"
+  22          #include "hw_pwm.h"
+  23          
+  24          
+  25          void Time0Reload()
+  26          {
+  27   1      
+  28   1        TR0 = 0;
+  29   1        TH0 = 0xff;
+  30   1        TL0 = 0xa4;
+  31   1      
+  32   1      }
+  33          
+  34          void Time0Start()
+  35          {
+  36   1      
+  37   1        TR0 = 1;
+  38   1      }
+  39          
+  40          void Time0_Int() interrupt 1
+  41          {
+  42   1      
+  43   1        if(timerCbFunQueEmpty()){
+  44   2        
+  45   2           // queue empty
+  46   2           return;
+  47   2        }
+  48   1        
+  49   1        timerCbFunExce(TIMER_0);
+  50   1        
+  51   1      
+  52   1      }
+  53          
+  54          void Time1_Int() interrupt 3
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/16/2019 17:05:26 PAGE 2   
+
+  55          {
+  56   1      
+  57   1        if(timerCbFunQueEmpty()){
+  58   2        
+  59   2           // queue empty
+  60   2           return;
+  61   2        }
+  62   1        
+  63   1        timerCbFunExce(TIMER_1);
+  64   1        
+  65   1      
+  66   1      }
+  67          
+  68          void Time2_Int() interrupt 12
+  69          {
+  70   1      
+  71   1        if(timerCbFunQueEmpty()){
+  72   2        
+  73   2           // queue empty
+  74   2           return;
+  75   2        }
+  76   1        
+  77   1        timerCbFunExce(TIMER_2);
+  78   1        
+  79   1      
+  80   1      }
+  81          
+  82          void Time3_Int() interrupt 19
+  83          {
+  84   1      
+  85   1        if(timerCbFunQueEmpty()){
+  86   2        
+  87   2           // queue empty
+  88   2           return;
+  89   2        }
+  90   1        
+  91   1        timerCbFunExce(TIMER_3);
+  92   1        
+  93   1      
+  94   1      }
+  95          
+  96          void Time4_Int() interrupt 20
+  97          {
+  98   1      
+  99   1        if(timerCbFunQueEmpty()){
+ 100   2        
+ 101   2           // queue empty
+ 102   2           return;
+ 103   2        }
+ 104   1        
+ 105   1        timerCbFunExce(TIMER_4);
+ 106   1        
+ 107   1      
+ 108   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    347    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/16/2019 17:05:26 PAGE 3   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

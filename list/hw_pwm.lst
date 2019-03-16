@@ -1,0 +1,135 @@
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/16/2019 17:05:26 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_PWM
+OBJECT MODULE PLACED IN .\list\hw_pwm.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\51\hw_pwm.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PR
+                    -INT(.\list\hw_pwm.lst) TABS(2) OBJECT(.\list\hw_pwm.obj)
+
+line level    source
+
+   1          
+   2          /*------------------------------------------------------------------*/
+   3          /* --- STC MCU International Limited -------------------------------*/
+   4          /* --- STC 1T Series MCU RC Demo -----------------------------------*/
+   5          /* --- Mobile: (86)13922805190 -------------------------------------*/
+   6          /* --- Fax: 86-0513-55012956,55012947,55012969 ---------------------*/
+   7          /* --- Tel: 86-0513-55012928,55012929,55012966 ---------------------*/
+   8          /* --- Web: www.GXWMCU.com -----------------------------------------*/
+   9          /* --- QQ:  800003751 ----------------------------------------------*/
+  10          /* If you want to use the program or the program referenced in the  */
+  11          /* article, please specify in which data and procedures from STC    */
+  12          /*------------------------------------------------------------------*/
+  13          
+  14          /*************  功能说明  **************
+  15          
+  16          本文件为STC8xxx系列的端口初始化程序,用户几乎可以不修改这个程序.
+  17          
+  18          
+  19          ******************************************/
+  20          
+  21          #include "hw_pwm.h"
+  22          #include "hal/pinCtl.h"
+  23          
+  24          static uint16 G_ServoPulCnt = 0;
+  25          static uint16 G_ServoPulseWidth = 15;
+  26          static uint16 G_ServoCtlPin = 0;
+  27          
+  28          void resetServoPulCnt()
+  29          {
+  30   1        G_ServoPulCnt = 0;
+  31   1      }
+  32          
+  33          void setServoPulseWidth(uint16 cnt)
+  34          {
+  35   1        G_ServoPulseWidth = cnt;
+  36   1      }
+  37          
+  38          void setServoCtlPin(uint8 pin)
+  39          {
+  40   1        G_ServoCtlPin = pin;
+  41   1      }
+  42          
+  43          
+  44          void ServoPwmInterruptProc()
+  45          {
+  46   1      
+  47   1        if(G_ServoPulCnt <= G_ServoPulseWidth){
+  48   2        
+  49   2          digitalWrite_common(G_ServoCtlPin, HIGH);
+  50   2        }else{
+  51   2        
+  52   2          digitalWrite_common(G_ServoCtlPin, LOW);
+  53   2        }
+  54   1        
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/16/2019 17:05:26 PAGE 2   
+
+  55   1        G_ServoPulCnt++;
+  56   1        if(G_ServoPulCnt >= 200){
+  57   2        
+  58   2            G_ServoPulCnt = 0;
+  59   2        }
+  60   1      
+  61   1        
+  62   1      }
+  63          
+  64          
+  65          void uartCmdProc(void *uartData)
+  66          {
+  67   1        static uint8 servoPulseWidth = 15;
+  68   1        uint8 *command = (uint8 *)uartData;
+  69   1        
+  70   1        switch(*command){
+  71   2        
+  72   2          case 'f':
+  73   2          {
+  74   3              servoPulseWidth++;
+  75   3              if(servoPulseWidth >= 25){
+  76   4              
+  77   4                servoPulseWidth = 25;
+  78   4                setServoPulseWidth(servoPulseWidth);
+  79   4              }
+  80   3              resetServoPulCnt();
+  81   3              break;
+  82   3          }
+  83   2          case 'g':
+  84   2          {
+  85   3              servoPulseWidth--;
+  86   3              if(servoPulseWidth <= 5){
+  87   4              
+  88   4                servoPulseWidth = 5;
+  89   4                setServoPulseWidth(servoPulseWidth);
+  90   4              }
+  91   3              resetServoPulCnt();
+  92   3              break;
+  93   3          }
+  94   2          case 'k':
+  95   2          {
+  96   3              servoPulseWidth = 15;
+  97   3              setServoPulseWidth(servoPulseWidth);
+  98   3              resetServoPulCnt();
+  99   3              break;
+ 100   3          }
+ 101   2          default:
+ 102   2          {
+ 103   3              break;
+ 104   3          }
+ 105   2        }
+ 106   1        
+ 107   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    172    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      7    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/16/2019 17:05:26 PAGE 3   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

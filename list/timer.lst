@@ -1,0 +1,162 @@
+C51 COMPILER V9.56.0.0   TIMER                                                             03/16/2019 17:02:34 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN .\list\timer.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE hal\timer.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\l
+                    -ist\timer.lst) TABS(2) OBJECT(.\list\timer.obj)
+
+line level    source
+
+   1          
+   2          /*------------------------------------------------------------------*/
+   3          /* --- STC MCU International Limited -------------------------------*/
+   4          /* --- STC 1T Series MCU RC Demo -----------------------------------*/
+   5          /* --- Mobile: (86)13922805190 -------------------------------------*/
+   6          /* --- Fax: 86-0513-55012956,55012947,55012969 ---------------------*/
+   7          /* --- Tel: 86-0513-55012928,55012929,55012966 ---------------------*/
+   8          /* --- Web: www.GXWMCU.com -----------------------------------------*/
+   9          /* --- QQ:  800003751 ----------------------------------------------*/
+  10          /* If you want to use the program or the program referenced in the  */
+  11          /* article, please specify in which data and procedures from STC    */
+  12          /*------------------------------------------------------------------*/
+  13          
+  14          /*************  功能说明  **************
+  15          
+  16          本文件为STC8xxx系列的端口初始化程序,用户几乎可以不修改这个程序.
+  17          
+  18          
+  19          ******************************************/
+  20          #include "timer.h"
+  21          #include "hw_timer.h"
+*** WARNING C318 IN LINE 21 OF hal\timer.c: can't open file 'hw_timer.h'
+  22          #include "pwm.h"
+*** WARNING C318 IN LINE 22 OF hal\timer.c: can't open file 'pwm.h'
+  23          
+  24          static uint8 G_ServoEnable = 0;
+  25          #define MAX_TIMER_CB_FUN (6)
+  26          
+  27          typedef enum{
+  28          
+  29            NOR = 0
+  30            
+  31          }TIMER_EVENT;
+  32          
+  33          typedef struct s_timerCbFunCfg{
+  34            
+  35            uint8 timerx;
+  36            timerEvnCbFun_t timerxEvnCbFun;
+  37            
+  38          }s_timerCbFunCfg;
+  39          
+  40          typedef struct s_timerCbFunQue{
+  41            
+  42            uint8 head;
+  43            uint8 tail;
+  44            
+  45          }s_timerCbFunQue;
+  46          
+  47          static s_timerCbFunQue G_timerCbFunQue = {0, MAX_TIMER_CB_FUN-1};
+  48          
+  49          s_timerCbFunCfg G_timerEvnCbFuns[MAX_TIMER_CB_FUN] = {{0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}};
+  50          
+  51          int8 timerCbFunQueEmpty()
+  52          {
+C51 COMPILER V9.56.0.0   TIMER                                                             03/16/2019 17:02:34 PAGE 2   
+
+  53   1        if((G_timerCbFunQue.head+1)%MAX_TIMER_CB_FUN == G_timerCbFunQue.tail){
+  54   2        
+  55   2           // queue empty
+  56   2           return 1;
+  57   2          
+  58   2        }else{
+  59   2          
+  60   2           return 0;
+  61   2        }
+  62   1      }
+  63          
+  64          int8 timerCbFunQueFull()
+  65          {
+  66   1        if((G_timerCbFunQue.tail+1)%MAX_TIMER_CB_FUN == G_timerCbFunQue.head){
+  67   2        
+  68   2           // queue full
+  69   2           return 1;
+  70   2          
+  71   2        }else{
+  72   2          
+  73   2           return 0;
+  74   2        }
+  75   1      }
+  76          
+  77          int8 timerCbFunExce(TIME_X timerx)
+  78          {
+  79   1        uint8 head = G_timerCbFunQue.head;
+  80   1        timerEvnCbFun_t timerxEvnCbFun;
+  81   1        
+  82   1        if(timerCbFunQueEmpty()){
+  83   2        
+  84   2           // queue full
+  85   2           return -1;
+  86   2          
+  87   2        }
+  88   1        
+  89   1        while((head+1)%MAX_TIMER_CB_FUN != G_timerCbFunQue.tail){
+  90   2        
+  91   2            if(timerx == G_timerEvnCbFuns[head].timerx){
+  92   3            
+  93   3              timerxEvnCbFun = G_timerEvnCbFuns[head].timerxEvnCbFun;
+  94   3              timerxEvnCbFun();
+*** WARNING C209 IN LINE 94 OF hal\timer.c: 'function': too few actual parameters
+  95   3            }
+  96   2            
+  97   2            head++;
+  98   2          
+  99   2        }
+ 100   1        
+ 101   1        return 0;
+ 102   1      }
+ 103          
+ 104          int8 registTimerCbFun(TIME_X timerx, timerEvnCbFun_t cb)
+ 105          {
+ 106   1        if(timerCbFunQueFull()){
+ 107   2        
+ 108   2           // queue full
+ 109   2           return -1;
+ 110   2        }
+ 111   1        
+ 112   1        G_timerCbFunQue.tail = (G_timerCbFunQue.tail+1)%MAX_TIMER_CB_FUN;
+ 113   1        G_timerEvnCbFuns[G_timerCbFunQue.tail].timerx = timerx;
+C51 COMPILER V9.56.0.0   TIMER                                                             03/16/2019 17:02:34 PAGE 3   
+
+ 114   1        G_timerEvnCbFuns[G_timerCbFunQue.tail].timerxEvnCbFun = cb;
+ 115   1        return G_timerCbFunQue.tail;
+ 116   1      }
+ 117          
+ 118          int8 unregistTimerCbFun(int8 cb_FunID)
+ 119          {
+ 120   1      
+ 121   1        if(timerCbFunQueEmpty()){
+ 122   2        
+ 123   2           // queue empty
+ 124   2           return -1;
+ 125   2        }
+ 126   1        
+ 127   1        G_timerEvnCbFuns[cb_FunID].timerx = 0;
+ 128   1        G_timerEvnCbFuns[cb_FunID].timerxEvnCbFun = NULL;
+ 129   1        
+ 130   1      }
+*** WARNING C291 IN LINE 130 OF hal\timer.c: not every exit path returns a value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    324    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     27       7
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)

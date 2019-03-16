@@ -1,0 +1,18 @@
+".\list\main.obj",
+".\list\carCtl.obj",
+".\list\ir.obj",
+".\list\motor.obj",
+".\list\pinCtl.obj",
+".\list\servoCommon.obj",
+".\list\tailCtl.obj",
+".\list\wifi.obj",
+".\list\timer.obj",
+".\list\serial.obj",
+".\list\wifi_esp8266.obj",
+".\list\hw_gpioCtl51.obj",
+".\list\hw_pwm.obj",
+".\list\hw_serial.obj",
+".\list\hw_timer.obj",
+".\list\delay.obj" 
+TO ".\list\IO-LED" 
+PRINT(".\list\IO-LED.m51") RAMSIZE(256) 

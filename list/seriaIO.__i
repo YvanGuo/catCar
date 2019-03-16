@@ -1,0 +1,1 @@
+"hal\seriaIO.c" OPTIMIZE (8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\seriaIO.lst) TABS (2) OBJECT(.\list\seriaIO.obj)

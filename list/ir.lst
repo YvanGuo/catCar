@@ -1,0 +1,56 @@
+C51 COMPILER V9.56.0.0   IR                                                                03/16/2019 15:14:59 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE IR
+OBJECT MODULE PLACED IN .\list\ir.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE hal\ir.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list
+                    -\ir.lst) TABS(2) OBJECT(.\list\ir.obj)
+
+line level    source
+
+   1          #include "common.h"
+   2          #include "ir.h"
+   3          #include "pinCtl.h"
+   4          
+   5          static s_IRParam G_IRParam;
+   6          
+   7          int8 initIR(s_IRParam *param)
+   8          {
+   9   1        int i=0;
+  10   1        
+  11   1        if(!param){
+  12   2           return -1;
+  13   2        }
+  14   1        
+  15   1        if(param->IRNum >= MAX_IR_NUM){
+  16   2           return -1;
+  17   2        }
+  18   1        
+  19   1        G_IRParam.IRNum = param->IRNum;
+  20   1      
+  21   1        for(i=0; i<param->IRNum; i++)
+  22   1        {
+  23   2            pinMode_common(param->Ir[i].Ir_pin, INPUT);
+  24   2            G_IRParam.Ir[i].Ir_pin = param->Ir[i].Ir_pin;
+  25   2        }
+  26   1        return 0;
+  27   1      }
+  28          
+  29          int8 getIRStartus(IRS ir)
+  30          {
+  31   1          return digitalRead_common(G_IRParam.Ir[ir].Ir_pin);
+  32   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    194    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      3       5
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

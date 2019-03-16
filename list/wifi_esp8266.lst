@@ -1,0 +1,28 @@
+C51 COMPILER V9.56.0.0   WIFI_ESP8266                                                      03/16/2019 15:15:01 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE WIFI_ESP8266
+OBJECT MODULE PLACED IN .\list\wifi_esp8266.obj
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\wifi\esp8266\wifi_esp8266.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG
+                    - OBJECTEXTEND PRINT(.\list\wifi_esp8266.lst) TABS(2) OBJECT(.\list\wifi_esp8266.obj)
+
+line level    source
+
+   1          #include "serialIO.h"
+*** WARNING C318 IN LINE 1 OF driver\wifi\esp8266\wifi_esp8266.c: can't open file 'serialIO.h'
+   2          #include "wifi_esp8266.h"
+   3          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

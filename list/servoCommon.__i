@@ -1,0 +1,1 @@
+"hal\servoCommon.c" LARGE OPTIMIZE (8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\servoCommon.lst) TABS (2) OBJECT(.\list\servoCommon.obj)
