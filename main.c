@@ -18,27 +18,21 @@
 #include  "hal/pinCtl.h"
 #include  "hal/servoCommon.h"
 #include  "hal/serial.h"
+#include  "hal/timer.h"
 #include  "driver/51/hw_serial.h"
-
+#include  "driver/51/hw_timer.h"
 
 /******************** Ö÷º¯Êý **************************/
 void main(void)
 {
-	uint16 angle = 0;
-	
-	u8	i;
+	uint16 angle = 90;
+	uint8 ret = 0;
+	uint8	i;
 
 	HW_serialConfig(USART1, 115200ul);
-	
+	pinMode_common(LED_CTL_PIN, OUTPUT); 
+	ServoDefaultInit();
 	EA = 1;
-#if 1
-	while (1)
-	{
-		delay_ms(250);
-		printf("hello cats !!!!\r\n");	
-		
-	}
-#endif
 	
 	#if 0
 	pinMode_common(MOTOR_LEFT_PIN_LEFT, OUTPUT);
@@ -50,34 +44,21 @@ void main(void)
 	pinMode_common(RIGHT_IR_PIN, INPUT);
 	#endif
 	
-	pinMode_common(LED_CTL_PIN, OUTPUT);
-	
-	ServoDefaultInit();
+	servoWrite(angle);
 	while(1)
 	{
 		
 		//digitalRead_common(LEFT_IR_PIN);
 		//digitalRead_common(RIGHT_IR_PIN);
+		//printf("hello catsssssss !!!!\r\n");
 		
-		#if 0
-		digitalWrite_common(LED_CTL_PIN, HIGH);
-		delay_ms(250);
-		delay_ms(250);
-		delay_ms(250);
-		delay_ms(250);
-		digitalWrite_common(LED_CTL_PIN, LOW);
-		delay_ms(250);
-		delay_ms(250);
-		delay_ms(250);
-		delay_ms(250);
-		#endif
-		printf("the angle is %d\r\n",angle);
-		
+		angle = (90+36)%180;
 		servoWrite(angle);
-		
-		angle = (angle+9)%180;
-		
-		delay_ms(100);
+		delay_ms(250);
+		angle = (90-36)%180;
+		servoWrite(angle);
+		delay_ms(250);
+
 	}
 }
 

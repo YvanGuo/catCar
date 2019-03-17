@@ -1,0 +1,1 @@
+"driver\wifi\esp8266\wifi_esp8266.c" LARGE OPTIMIZE (9,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\wifi_esp8266.lst) TABS (2) OBJECT(.\list\wifi_esp8266.obj)

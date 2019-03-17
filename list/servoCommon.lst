@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 14:30:49 PAGE 1   
+C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 22:26:02 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SERVOCOMMON
@@ -13,124 +13,153 @@ line level    source
    3          #include "pinCtl.h"
    4          #include "driver/51/hw_pwm.h"
    5          #include "timer.h"
-   6          
-   7          typedef struct s_ServoCfg{
-   8              int16 pin;
-   9              uint16 minPW;
-  10              uint16 maxPW;
-  11              int16 minAngle;
-  12              int16 maxAngle;
-  13          }s_ServoCfg;
-  14          
-  15          static s_ServoCfg G_ServoCfg = {-1, -1, -1, -1, -1};
-  16          
-  17          static void resetFields(void)
-  18          {
-  19   1        setServoPulseWidth(15);
-  20   1        
-  21   1      }
-  22          
-  23          uint16 servoReadMicroseconds()
-  24          {
-  25   1        
-  26   1        return 0;
-  27   1      }
-  28          
-  29          void servoWriteMicroseconds(uint16 pulseWidth)
-  30          {
-  31   1        
-  32   1        setServoPulseWidth(pulseWidth);
-  33   1        
-  34   1      }
-  35          
-  36          int32 servoRead()
-  37          {
-  38   1        
-  39   1        return 0;
-  40   1      }
-  41          
+   6          #include <stdio.h>
+   7          
+   8          typedef struct s_ServoCfg{
+   9              uint8 pin;
+  10              uint16 minPW;
+  11              uint16 maxPW;
+  12              int16 minAngle;
+  13              int16 maxAngle;
+  14          }s_ServoCfg;
+  15          
+  16          static s_ServoCfg G_ServoCfg = {-1, -1, -1, -1, -1};
+  17          
+  18          static void resetFields(void)
+  19          {
+  20   1        setServoPulseWidth(15);
+  21   1        
+  22   1      }
+  23          
+  24          uint16 servoReadMicroseconds()
+  25          {
+  26   1        
+  27   1        return 0;
+  28   1      }
+  29          
+  30          void servoWriteMicroseconds(uint16 pulseWidth)
+  31          {
+  32   1        
+  33   1        setServoPulseWidth(pulseWidth);
+  34   1        
+  35   1      }
+  36          
+  37          int32 servoRead()
+  38          {
+  39   1        
+  40   1        return 0;
+  41   1      }
   42          
-  43          void servoWrite(int32 angle)
-  44          {
-  45   1        uint16 pulseWidth = 5;
-  46   1        
-  47   1        if(angle < 0 || angle > 180){
-  48   2        
-  49   2          return;
-  50   2        }
-  51   1        
-  52   1        pulseWidth = 5+angle/9;
-  53   1        
-  54   1        setServoPulseWidth(pulseWidth);
-C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 14:30:49 PAGE 2   
+  43          
+  44          void servoWrite(int32 angle)
+  45          {
+  46   1        uint16 pulseWidth = 5;
+  47   1        
+  48   1        if(angle < 0 || angle > 180){
+  49   2        
+  50   2          return;
+  51   2        }
+  52   1        
+  53   1        pulseWidth = 5+angle/9;
+  54   1        
+C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 22:26:02 PAGE 2   
 
-  55   1      }
-  56          
-  57          int8 servoDetach()
-  58          {
-  59   1        pinMode_common(G_ServoCfg.pin, OUTPUT);
-  60   1        G_ServoCfg.pin = NOT_ATTACHED;
-  61   1        return 0;
-  62   1      }
-  63          
-  64          int32 servoAttachedPin()
-  65          { 
-  66   1        return G_ServoCfg.pin; 
-  67   1        
-  68   1      }
-  69          
-  70          int16 servoAttached()
-  71          { 
-  72   1        return G_ServoCfg.pin != NOT_ATTACHED; 
-  73   1      }
-  74          
-  75          int8 servoAttach(uint8 pin, uint16 minPulseWidth, uint16 maxPulseWidth, int16 minAngle, int16 maxAngle)
-  76          {
-  77   1        if(servoAttached()){
-  78   2        
-  79   2          //return 0;
-  80   2        }
-  81   1        
-  82   1        G_ServoCfg.pin = pin;
-  83   1        G_ServoCfg.minPW = minPulseWidth;
-  84   1        G_ServoCfg.maxPW = maxPulseWidth;
-  85   1        G_ServoCfg.minAngle = minAngle;
-  86   1        G_ServoCfg.maxAngle = maxAngle;
-  87   1        pinMode_common(pin, PWM);
-  88   1        registTimerCbFun(TIMER_0, ServoPwmInterruptProc);
-  89   1        timerxStart(TIMER_0);
-  90   1        return 0;
-  91   1      }
-  92          
-  93          void ServoDefaultInit()
-  94          {
-  95   1        if(servoAttached()){
-  96   2        
-  97   2          //return;
-  98   2        }
-  99   1        
- 100   1        G_ServoCfg.pin = SERVO_CTL_PIN;
- 101   1        G_ServoCfg.minPW = SERVO_DEFAULT_MIN_PW;
- 102   1        G_ServoCfg.maxPW = SERVO_DEFAULT_MAX_PW;
- 103   1        G_ServoCfg.minAngle = SERVO_DEFAULT_MIN_ANGLE;
- 104   1        G_ServoCfg.maxAngle = SERVO_DEFAULT_MAX_ANGLE;
- 105   1        pinMode_common(G_ServoCfg.pin, PWM);
- 106   1        registTimerCbFun(TIMER_0, ServoPwmInterruptProc);
- 107   1        timerxStart(TIMER_0);
- 108   1      }
+  55   1        setServoPulseWidth(pulseWidth);
+  56   1      }
+  57          
+  58          int8 servoDetach()
+  59          {
+  60   1        pinMode_common(G_ServoCfg.pin, OUTPUT);
+  61   1        G_ServoCfg.pin = NOT_ATTACHED;
+  62   1        return 0;
+  63   1      }
+  64          
+  65          int32 servoAttachedPin()
+  66          { 
+  67   1        return G_ServoCfg.pin; 
+  68   1        
+  69   1      }
+  70          
+  71          int16 servoAttached()
+  72          { 
+  73   1        return G_ServoCfg.pin != NOT_ATTACHED; 
+  74   1      }
+  75          
+  76          void testTimerCb(TIME_X timerx)
+  77          {
+  78   1      
+  79   1        static u32 timeCnt = 0;
+  80   1        timeCnt++;
+  81   1        if(timeCnt > 1000){
+  82   2        
+  83   2          digitalWrite_common(LED_CTL_PIN, LOW);
+  84   2          printf("LED on\r\n");
+  85   2        }else{
+  86   2        
+  87   2          digitalWrite_common(LED_CTL_PIN, HIGH);
+  88   2          printf("LED off\r\n");
+  89   2        }
+  90   1        
+  91   1        if(timeCnt > 2000){
+  92   2        
+  93   2          timeCnt = 0;
+  94   2        }
+  95   1        
+  96   1        
+  97   1      }
+*** WARNING C280 IN LINE 76 OF hal\servoCommon.c: 'timerx': unreferenced local variable
+  98          
+  99          
+ 100          int8 servoAttach(uint8 pin, uint16 minPulseWidth, uint16 maxPulseWidth, int16 minAngle, int16 maxAngle)
+ 101          {
+ 102   1        if(servoAttached()){
+ 103   2        
+ 104   2          //return 0;
+ 105   2        }
+ 106   1        
+ 107   1        G_ServoCfg.pin = pin;
+ 108   1        G_ServoCfg.minPW = minPulseWidth;
+ 109   1        G_ServoCfg.maxPW = maxPulseWidth;
+ 110   1        G_ServoCfg.minAngle = minAngle;
+ 111   1        G_ServoCfg.maxAngle = maxAngle;
+ 112   1        pinMode_common(pin, PWM);
+ 113   1        setServoCtlPin(G_ServoCfg.pin);
+ 114   1        timerRegist(TIMER_0, 1, ServoPwmInterruptProc);
+ 115   1        return 0;
+C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 22:26:02 PAGE 3   
+
+ 116   1      }
+ 117          
+ 118          
+ 119          
+ 120          void ServoDefaultInit()
+ 121          {
+ 122   1        if(servoAttached()){
+ 123   2        
+ 124   2          //return;
+ 125   2        }
+ 126   1        
+ 127   1        G_ServoCfg.pin = SERVO_CTL_PIN;
+ 128   1        G_ServoCfg.minPW = SERVO_DEFAULT_MIN_PW;
+ 129   1        G_ServoCfg.maxPW = SERVO_DEFAULT_MAX_PW;
+ 130   1        G_ServoCfg.minAngle = SERVO_DEFAULT_MIN_ANGLE;
+ 131   1        G_ServoCfg.maxAngle = SERVO_DEFAULT_MAX_ANGLE;
+ 132   1        pinMode_common(G_ServoCfg.pin, PWM);
+ 133   1        setServoCtlPin(G_ServoCfg.pin);
+ 134   1        timerRegist(TIMER_0, 1, ServoPwmInterruptProc);
+ 135   1        //timerRegist(TIMER_0, 1, testTimerCb);
+ 136   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    263    ----
-   CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     10       9
+   CODE SIZE        =    379    ----
+   CONSTANT SIZE    =     19    ----
+   XDATA SIZE       =     13      10
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
-C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 14:30:49 PAGE 3   
-
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

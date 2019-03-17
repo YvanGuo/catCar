@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 14:30:51 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 22:26:02 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_SERIAL
@@ -62,7 +62,7 @@ line level    source
   52   2          else                  PS = 0; //低优先级中断
   53   2          SCON = (SCON & 0x3f) | COMx->UART_Mode;
   54   2          if((COMx->UART_Mode == UART_9bit_BRTx) ||(COMx->UART_Mode == UART_8bit_BRTx)) //可变波特率
-C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 14:30:51 PAGE 2   
+C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 22:26:02 PAGE 2   
 
   55   2          {
   56   3            j = (MAIN_Fosc / 4) / COMx->UART_BaudRate;  //按1T计算
@@ -126,7 +126,7 @@ line level    source
  114   1        TX1_Buffer[COM1.TX_write] = dat;  //装发送缓冲
  115   1        if(++COM1.TX_write >= COM_TX1_Lenth)  COM1.TX_write = 0;
  116   1      
-C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 14:30:51 PAGE 3   
+C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 22:26:02 PAGE 3   
 
  117   1        if(COM1.B_TX_busy == 0)   //空闲
  118   1        {  
@@ -190,7 +190,7 @@ line level    source
  176          
  177          
  178          void  HW_serialConfig(UART_ID UARTx, u32 UART_BaudRate)
-C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 14:30:51 PAGE 4   
+C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 22:26:02 PAGE 4   
 
  179          {
  180   1        COMx_InitDefine   COMx_InitStructure;         //结构定义
@@ -254,7 +254,7 @@ line level    source
  235   3            //TX2_write2buff(wdata[i]);
  236   3          }
  237   2        }
-C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 14:30:51 PAGE 5   
+C51 COMPILER V9.56.0.0   HW_SERIAL                                                         03/17/2019 22:26:02 PAGE 5   
 
  238   1        
  239   1        return 0;

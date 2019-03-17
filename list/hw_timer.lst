@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_TIMER
@@ -31,198 +31,255 @@ line level    source
   21          #include "hw_timer.h"
   22          #include "hw_pwm.h"
   23          #include <stdio.h>
-  24          
-  25          void HW_Time0Start()
-  26          {
-  27   1        //TR0 = 1;
-  28   1        Timer0_Run();
-  29   1        Timer0_InterruptEnable();
-  30   1      }
-  31          
-  32          void HW_Time0Reload()
-  33          {
-  34   1        //TR0 = 0;
-  35   1        Timer0_Stop();
-  36   1        TH0 = 0xff;
-  37   1        TL0 = 0xa4;
-  38   1      }
+  24          #include  "hal/pinCtl.h"
+  25          
+  26          /*------------------------------------------------------------------*/
+  27          /* --- STC MCU International Limited -------------------------------*/
+  28          /* --- STC 1T Series MCU RC Demo -----------------------------------*/
+  29          /* --- Mobile: (86)13922805190 -------------------------------------*/
+  30          /* --- Fax: 86-0513-55012956,55012947,55012969 ---------------------*/
+  31          /* --- Tel: 86-0513-55012928,55012929,55012966 ---------------------*/
+  32          /* --- Web: www.GXWMCU.com -----------------------------------------*/
+  33          /* --- QQ:  800003751 ----------------------------------------------*/
+  34          /* If you want to use the program or the program referenced in the  */
+  35          /* article, please specify in which data and procedures from STC    */
+  36          /*------------------------------------------------------------------*/
+  37          
+  38          /*************  功能说明  **************
   39          
-  40          void HW_Time1Start()
-  41          {
-  42   1        //TR0 = 1;
-  43   1        Timer1_Run();
-  44   1        Timer1_InterruptEnable();
-  45   1      }
-  46          
-  47          void HW_Time1Reload()
-  48          {
-  49   1        //TR0 = 0;
-  50   1        Timer1_Stop();
-  51   1        TH1 = 0xff;
-  52   1        TL1 = 0xa4;
-  53   1      }
+  40          本文件为STC15xxx系列的定时器初始化和中断程序,用户可以在这个文件中修改自己需要的中断程序.
+  41          
+  42          
+  43          ******************************************/
+  44          typedef struct
+  45          {
+  46            uint8 TIM_Mode;   //工作模式,   TIM_16BitAutoReload,TIM_16Bit,TIM_8BitAutoReload,TIM_16BitAutoReloadNoMask
+  47            uint8 TIM_Polity;   //优先级设置  PolityHigh,PolityLow
+  48            uint8 TIM_Interrupt;  //中断允许    ENABLE,DISABLE
+  49            uint8 TIM_ClkSource;  //时钟源    TIM_CLOCK_1T,TIM_CLOCK_12T,TIM_CLOCK_Ext
+  50            uint8 TIM_ClkOut;   //可编程时钟输出, ENABLE,DISABLE
+  51            uint16  TIM_Value;    //装载初值
+  52            uint8 TIM_Run;    //是否运行    ENABLE,DISABLE
+  53          } TIM_InitTypeDef;
   54          
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 2   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 2   
 
-  55          #if 0
-              
-              void HW_TimexStart(TIME_X timerx)
-              {
-                switch(timerx){
-                  case TIMER_0:{
-                  
-                    TR0 = 1;
-                    break;
-                  }
-                  case TIMER_1:{
-                    
-                    TR1 = 1;
-                    break;
-                  }
-                  case TIMER_2:{
-                  
-                    TR2 = 1;
-                    break;
-                  }
-                  case TIMER_3:{
-                  
-                    TR3 = 1;
-                    break;
-                  }
-                  case TIMER_4:{
-                  
-                    TR4 = 1;
-                    break;
-                  }
-                }
-                
-              }
-              
-              void HW_TimexReload(TIME_X timerx)
-              {
-              
-                
-                switch(timerx){
-                  case TIMER_0:{
-                  
-                    TR0 = 0;
-                    TH0 = 0xff;
-                    TL0 = 0xa4;
-                    break;
-                  }
-                  case TIMER_1:{
-                    
-                    TR1 = 1;
-                    TH1 = 0xff;
-                    TL1 = 0xa4;
-                    break;
-                  }
-                  case TIMER_2:{
-                  
-                    TR2 = 1;
-                    TH2 = 0xff;
-                    TL2 = 0xa4;
-                    break;
-                  }
-                  case TIMER_3:{
-                  
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 3   
+  55          
+  56          /********************* Timer0中断函数************************/
+  57          void Time0_Int() interrupt TIMER0_VECTOR
+  58          {
+  59   1      
+  60   1        //printf("in Time0_Int tttt \r\n");
+  61   1        //ServoPwmInterruptProc(0);
+  62   1        timerCbFunExce(TIMER_0);
+  63   1        
+  64   1      }
+  65          
+  66          void Time1_Int() interrupt TIMER1_VECTOR
+  67          {
+  68   1      
+  69   1        if(timerCbFunQueEmpty()){
+  70   2        
+  71   2           // queue empty
+  72   2           return;
+  73   2        }
+  74   1        
+  75   1        printf("in Time1_Int tttt \r\n");
+  76   1        timerCbFunExce(TIMER_1);
+  77   1        
+  78   1      
+  79   1      }
+  80          
+  81          void Time2_Int() interrupt TIMER2_VECTOR
+  82          {
+  83   1      
+  84   1        if(timerCbFunQueEmpty()){
+  85   2        
+  86   2           // queue empty
+  87   2           return;
+  88   2        }
+  89   1        
+  90   1        timerCbFunExce(TIMER_2);
+  91   1        
+  92   1      
+  93   1      }
+  94          
+  95          void Time3_Int() interrupt TIMER3_VECTOR
+  96          {
+  97   1      
+  98   1        if(timerCbFunQueEmpty()){
+  99   2        
+ 100   2           // queue empty
+ 101   2           return;
+ 102   2        }
+ 103   1        
+ 104   1        timerCbFunExce(TIMER_3);
+ 105   1        
+ 106   1      
+ 107   1      }
+ 108          
+ 109          void Time4_Int() interrupt TIMER4_VECTOR
+ 110          {
+ 111   1      
+ 112   1        if(timerCbFunQueEmpty()){
+ 113   2        
+ 114   2           // queue empty
+ 115   2           return;
+ 116   2        }
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 3   
 
-                    TR3 = 1;
-                    TH3 = 0xff;
-                    TL3 = 0xa4;
-                    break;
-                  }
-                  case TIMER_4:{
-                  
-                    TR4 = 0;
-                    TH4 = 0xff;
-                    TL4 = 0xa4;
-                    break;
-                  }
-                }
-              }
-              #endif
- 132          
- 133          
- 134          void Time0_Int() interrupt TIMER0_VECTOR
- 135          {
- 136   1      
- 137   1        if(timerCbFunQueEmpty()){
- 138   2        
- 139   2           // queue empty
- 140   2           //return;
- 141   2        }
- 142   1        printf("in Time0_Int tttt \r\n");
- 143   1        timerCbFunExce(TIMER_0);
- 144   1        
- 145   1      
- 146   1      }
- 147          
- 148          void Time1_Int() interrupt TIMER1_VECTOR
- 149          {
- 150   1      
- 151   1        if(timerCbFunQueEmpty()){
- 152   2        
- 153   2           // queue empty
- 154   2           return;
+ 117   1        
+ 118   1        timerCbFunExce(TIMER_4);
+ 119   1        
+ 120   1      
+ 121   1      }
+ 122          
+ 123          
+ 124          //========================================================================
+ 125          // 函数: u8 Timer_Inilize(u8 TIM, TIM_InitTypeDef *TIMx)
+ 126          // 描述: 定时器初始化程序.
+ 127          // 参数: TIMx: 结构参数,请参考timer.h里的定义.
+ 128          // 返回: 成功返回0, 空操作返回1,错误返回2.
+ 129          // 版本: V1.0, 2012-10-22
+ 130          //========================================================================
+ 131          uint8 Timer_Inilize(TIME_X TIM, TIM_InitTypeDef *TIMx)
+ 132          {
+ 133   1        if(TIM > TIMER_2) return 5; //空操作
+ 134   1      
+ 135   1        if(TIM == TIMER_0)
+ 136   1        {
+ 137   2          TR0 = 0;    //停止计数
+ 138   2          if(TIMx->TIM_Interrupt == ENABLE)   ET0 = 1;  //允许中断
+ 139   2          else                  ET0 = 0;  //禁止中断
+ 140   2          if(TIMx->TIM_Polity == PolityHigh)    PT0 = 1;  //高优先级中断
+ 141   2          else                  PT0 = 0;  //低优先级中断
+ 142   2          if(TIMx->TIM_Mode >  TIM_16BitAutoReloadNoMask) return 2; //错误
+ 143   2          TMOD = (TMOD & ~0x03) | TIMx->TIM_Mode; //工作模式,0: 16位自动重装, 1: 16位定时/计数, 2: 8位自动重装, 3:
+             - 16位自动重装, 不可屏蔽中断
+ 144   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_12T)  AUXR &= ~0x80;  //12T
+ 145   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_1T)   AUXR |=  0x80;  //1T
+ 146   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_Ext)  TMOD |=  0x04;  //对外计数或分频
+ 147   2          else                    TMOD &= ~0x04;  //定时
+ 148   2          if(TIMx->TIM_ClkOut == ENABLE)  INT_CLKO |=  0x01;  //输出时钟
+ 149   2          else              INT_CLKO &= ~0x01;  //不输出时钟
+ 150   2          
+ 151   2          TH0 = (u8)(TIMx->TIM_Value >> 8);
+ 152   2          TL0 = (u8)TIMx->TIM_Value;
+ 153   2          if(TIMx->TIM_Run == ENABLE) TR0 = 1;  //开始运行
+ 154   2          return  0;    //成功
  155   2        }
- 156   1        
- 157   1        printf("in Time1_Int tttt \r\n");
- 158   1        timerCbFunExce(TIMER_1);
- 159   1        
- 160   1      
- 161   1      }
- 162          
- 163          void Time2_Int() interrupt TIMER2_VECTOR
- 164          {
- 165   1      
- 166   1        if(timerCbFunQueEmpty()){
- 167   2        
- 168   2           // queue empty
- 169   2           return;
- 170   2        }
- 171   1        
- 172   1        timerCbFunExce(TIMER_2);
- 173   1        
- 174   1      
- 175   1      }
- 176          
- 177          void Time3_Int() interrupt TIMER3_VECTOR
- 178          {
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 4   
+ 156   1      
+ 157   1        if(TIM == TIMER_1)
+ 158   1        {
+ 159   2          TR1 = 0;    //停止计数
+ 160   2          if(TIMx->TIM_Interrupt == ENABLE)   ET1 = 1;  //允许中断
+ 161   2          else                  ET1 = 0;  //禁止中断
+ 162   2          if(TIMx->TIM_Polity == PolityHigh)    PT1 = 1;  //高优先级中断
+ 163   2          else                  PT1 = 0;  //低优先级中断
+ 164   2          if(TIMx->TIM_Mode >= TIM_16BitAutoReloadNoMask) return 2; //错误
+ 165   2          TMOD = (TMOD & ~0x30) | TIMx->TIM_Mode; //工作模式,0: 16位自动重装, 1: 16位定时/计数, 2: 8位自动重装
+ 166   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_12T)  AUXR &= ~0x40;  //12T
+ 167   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_1T)   AUXR |=  0x40;  //1T
+ 168   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_Ext)  TMOD |=  0x40;  //对外计数或分频
+ 169   2          else                    TMOD &= ~0x40;  //定时
+ 170   2          if(TIMx->TIM_ClkOut == ENABLE)  INT_CLKO |=  0x02;  //输出时钟
+ 171   2          else              INT_CLKO &= ~0x02;  //不输出时钟
+ 172   2          
+ 173   2          TH1 = (u8)(TIMx->TIM_Value >> 8);
+ 174   2          TL1 = (u8)TIMx->TIM_Value;
+ 175   2          if(TIMx->TIM_Run == ENABLE) TR1 = 1;  //开始运行
+ 176   2          return  0;    //成功
+ 177   2        }
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 4   
 
- 179   1      
- 180   1        if(timerCbFunQueEmpty()){
- 181   2        
- 182   2           // queue empty
- 183   2           return;
- 184   2        }
- 185   1        
- 186   1        timerCbFunExce(TIMER_3);
- 187   1        
- 188   1      
- 189   1      }
- 190          
- 191          void Time4_Int() interrupt TIMER4_VECTOR
- 192          {
- 193   1      
- 194   1        if(timerCbFunQueEmpty()){
- 195   2        
- 196   2           // queue empty
- 197   2           return;
- 198   2        }
- 199   1        
- 200   1        timerCbFunExce(TIMER_4);
- 201   1        
- 202   1      
- 203   1      }
+ 178   1      
+ 179   1        if(TIM == TIMER_2)    //Timer2,固定为16位自动重装, 中断无优先级
+ 180   1        {
+ 181   2          AUXR &= ~(1<<4);  //停止计数
+ 182   2          if(TIMx->TIM_Interrupt == ENABLE)     IE2  |=  (1<<2);  //允许中断
+ 183   2          else                    IE2  &= ~(1<<2);  //禁止中断
+ 184   2          if(TIMx->TIM_ClkSource >  TIM_CLOCK_Ext)  return 2;
+ 185   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_12T)  AUXR &= ~(1<<2);  //12T
+ 186   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_1T)   AUXR |=  (1<<2);  //1T
+ 187   2          if(TIMx->TIM_ClkSource == TIM_CLOCK_Ext)  AUXR |=  (1<<3);  //对外计数或分频
+ 188   2          else                    AUXR &= ~(1<<3);  //定时
+ 189   2          if(TIMx->TIM_ClkOut == ENABLE)  INT_CLKO |=  0x04;  //输出时钟
+ 190   2          else              INT_CLKO &= ~0x04;  //不输出时钟
+ 191   2      
+ 192   2          TH2 = (u8)(TIMx->TIM_Value >> 8);
+ 193   2          TL2 = (u8)TIMx->TIM_Value;
+ 194   2          if(TIMx->TIM_Run == ENABLE) AUXR |=  (1<<4);  //开始运行
+ 195   2          return  0;    //成功
+ 196   2        }
+ 197   1        return 2; //错误
+ 198   1      }
+ 199          
+ 200          /************************ 定时器配置 ****************************/
+ 201          uint8 HW_Timer_config(TIME_X timerx, uint32 preCnt)
+ 202          {
+ 203   1        TIM_InitTypeDef   TIM_InitStructure;          //结构定义
+ 204   1        uint8 ret = 2;
+ 205   1        #if 0
+                TIM_InitStructure.TIM_Mode      = TIM_16BitAutoReload;  //指定工作模式,   TIM_16BitAutoReload,TIM_16Bit,TI
+             -M_8BitAutoReload,TIM_16BitAutoReloadNoMask
+                TIM_InitStructure.TIM_Polity    = PolityLow;      //指定中断优先级, PolityHigh,PolityLow
+                TIM_InitStructure.TIM_Interrupt = ENABLE;       //中断是否允许,   ENABLE或DISABLE
+                TIM_InitStructure.TIM_ClkSource = TIM_CLOCK_12T;      //指定时钟源,     TIM_CLOCK_1T,TIM_CLOCK_12T,TIM_CLOCK
+             -_Ext
+                TIM_InitStructure.TIM_ClkOut    = ENABLE;       //是否输出高速脉冲, ENABLE或DISABLE
+                TIM_InitStructure.TIM_Value     = 65536UL - (MAIN_Fosc / (50*12));    //初值,
+                TIM_InitStructure.TIM_Run       = ENABLE;       //是否初始化后启动定时器, ENABLE或DISABLE
+                ret = Timer_Inilize(TIMER_0,&TIM_InitStructure);        //初始化Timer0    Timer0,Timer1,Timer2
+                #endif
+ 215   1        
+ 216   1        #if 1
+ 217   1        TIM_InitStructure.TIM_Mode      = TIM_16BitAutoReload;  //指定工作模式,   TIM_16BitAutoReload,TIM_16Bit,TI
+             -M_8BitAutoReload,TIM_16BitAutoReloadNoMask
+ 218   1        TIM_InitStructure.TIM_Polity    = PolityLow;      //指定中断优先级, PolityHigh,PolityLow
+ 219   1        TIM_InitStructure.TIM_Interrupt = ENABLE;       //中断是否允许,   ENABLE或DISABLE
+ 220   1        TIM_InitStructure.TIM_ClkSource = TIM_CLOCK_1T;     //指定时钟源,     TIM_CLOCK_1T,TIM_CLOCK_12T,TIM_CLOCK_
+             -Ext
+ 221   1        TIM_InitStructure.TIM_ClkOut    = ENABLE;       //是否输出高速脉冲, ENABLE或DISABLE
+ 222   1        TIM_InitStructure.TIM_Value     = 65536UL - (MAIN_Fosc / 10000UL);    //初值,
+ 223   1        TIM_InitStructure.TIM_Run       = ENABLE;       //是否初始化后启动定时器, ENABLE或DISABLE
+ 224   1        ret = Timer_Inilize(TIMER_0,&TIM_InitStructure);        //初始化Timer0    Timer0,Timer1,Timer2
+ 225   1        #endif
+ 226   1        
+ 227   1        #if 0
+                TIM_InitStructure.TIM_Mode      = TIM_16BitAutoReloadNoMask;  //指定工作模式,   TIM_16BitAutoReload,TIM_16
+             -Bit,TIM_8BitAutoReload,TIM_16BitAutoReloadNoMask
+                TIM_InitStructure.TIM_Polity    = PolityLow;      //指定中断优先级, PolityHigh,PolityLow
+                TIM_InitStructure.TIM_Interrupt = ENABLE;       //中断是否允许,   ENABLE或DISABLE
+                TIM_InitStructure.TIM_ClkSource = TIM_CLOCK_1T;     //指定时钟源, TIM_CLOCK_1T,TIM_CLOCK_12T,TIM_CLOCK_Ext
+                TIM_InitStructure.TIM_ClkOut    = ENABLE;       //是否输出高速脉冲, ENABLE或DISABLE
+                TIM_InitStructure.TIM_Value     = 65536UL - (MAIN_Fosc / 1000UL); //初值,
+                TIM_InitStructure.TIM_Run       = ENABLE;       //是否初始化后启动定时器, ENABLE或DISABLE
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 5   
+
+                ret = Timer_Inilize(TIMER_1,&TIM_InitStructure);        //初始化Timer1    Timer0,Timer1,Timer2
+                #endif
+ 237   1      
+ 238   1        #if 0
+                TIM_InitStructure.TIM_Interrupt = ENABLE;       //中断是否允许,   ENABLE或DISABLE. (注意: Timer2固定为16位自
+             -动重装, 中断固定为低优先级)
+                TIM_InitStructure.TIM_ClkSource = TIM_CLOCK_12T;    //指定时钟源,     TIM_CLOCK_1T,TIM_CLOCK_12T,TIM_CLOCK_
+             -Ext
+                TIM_InitStructure.TIM_ClkOut    = ENABLE;       //是否输出高速脉冲, ENABLE或DISABLE
+                TIM_InitStructure.TIM_Value     = 65536UL - (MAIN_Fosc / (50*12));    //初值
+                TIM_InitStructure.TIM_Run       = ENABLE;       //是否初始化后启动定时器, ENABLE或DISABLE
+                ret = Timer_Inilize(TIMER_2,&TIM_InitStructure);        //初始化Timer2    Timer0,Timer1,Timer2
+                #endif
+ 246   1        return ret;
+ 247   1        
+ 248   1      }
+*** WARNING C280 IN LINE 201 OF driver\51\hw_timer.c: 'timerx': unreferenced local variable
+*** WARNING C280 IN LINE 201 OF driver\51\hw_timer.c: 'preCnt': unreferenced local variable
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    378    ----
-   CONSTANT SIZE    =     42    ----
-   XDATA SIZE       =   ----    ----
+   CODE SIZE        =    761    ----
+   CONSTANT SIZE    =     21    ----
+   XDATA SIZE       =   ----      11
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
@@ -230,4 +287,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

@@ -1,1 +1,1 @@
-"hal\serial.c" LARGE OPTIMIZE (8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\serial.lst) TABS (2) OBJECT(.\list\serial.obj)
+"hal\serial.c" LARGE OPTIMIZE (9,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\serial.lst) TABS (2) OBJECT(.\list\serial.obj)

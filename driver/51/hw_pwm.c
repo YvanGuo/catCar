@@ -22,10 +22,12 @@
 #include "hal/timer.h"
 #include "hal/pinCtl.h"
 #include "driver/51/hw_timer.h"
+#include "driver/51/hw_serial.h"
+#include <stdio.h>
 
 static uint16 G_ServoPulCnt = 0;
 static uint16 G_ServoPulseWidth = 15;
-static uint16 G_ServoCtlPin = 0;
+static uint8 G_ServoCtlPin = 0;
 
 void resetServoPulCnt()
 {
@@ -43,23 +45,37 @@ void setServoCtlPin(uint8 pin)
 }
 
 
-void ServoPwmInterruptProc(TIME_X timerx, void *userData)
+void ServoPwmInterruptProc(TIME_X timerx)
 {
-	if(TIMER_0 == timerx){
+	#if 1
+	static u32 timeCnt = 0;
+	timeCnt++;
+
+	if(timeCnt > 10000){
 	
-		HW_Time0Reload();
-	}else if(TIMER_1 == timerx){
+		//digitalWrite_common(G_ServoCtlPin, LOW);
+		
+	}else{
 	
-		HW_Time1Reload();
+		//digitalWrite_common(G_ServoCtlPin, HIGH);
 	}
 	
+	if(timeCnt > 20000){
 	
+		timeCnt = 0;
+	}
+	
+	#endif
+	
+	//printf("%d,%d,%d\r\n", (short)G_ServoPulseWidth, (short)G_ServoPulCnt, (unsigned int)timeCnt);
 	if(G_ServoPulCnt <= G_ServoPulseWidth){
 	
 		digitalWrite_common(G_ServoCtlPin, HIGH);
+		//PrintString1("H\r\n");
 	}else{
 	
 		digitalWrite_common(G_ServoCtlPin, LOW);
+		//PrintString1("L\r\n");
 	}
 	
 	G_ServoPulCnt++;
@@ -68,13 +84,7 @@ void ServoPwmInterruptProc(TIME_X timerx, void *userData)
 			G_ServoPulCnt = 0;
 	}
 
-	if(TIMER_0 == timerx){
-	
-		HW_Time0Start();
-	}else if(TIMER_1 == timerx){
-	
-		HW_Time1Start();
-	}
+
 }
 
 

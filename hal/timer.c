@@ -17,9 +17,10 @@
 
 
 ******************************************/
-#include "timer.h"
+#include  "timer.h"
 #include  "driver/51/hw_timer.h"
-#include "driver/51/hw_pwm.h"
+#include  "driver/51/hw_pwm.h"
+#include  "hal/pinCtl.h"
 
 static uint8 G_ServoEnable = 0;
 #define MAX_TIMER_CB_FUN (6)
@@ -32,7 +33,9 @@ typedef enum{
 
 typedef struct s_timerCbFunCfg{
 	
-	uint8 timerx;
+	TIME_X timerx;
+	uint32 timeCnt;
+	uint32 timeoutExc;
 	timerEvnCbFun_t timerxEvnCbFun;
 	
 }s_timerCbFunCfg;
@@ -44,13 +47,13 @@ typedef struct s_timerCbFunQue{
 	
 }s_timerCbFunQue;
 
-static s_timerCbFunQue G_timerCbFunQue = {0, MAX_TIMER_CB_FUN-1};
+static s_timerCbFunQue G_timerCbFunQue = {0, 0};
 
-s_timerCbFunCfg G_timerEvnCbFuns[MAX_TIMER_CB_FUN] = {{0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}, {0,NULL}};
+s_timerCbFunCfg G_timerEvnCbFuns[MAX_TIMER_CB_FUN] = {{0,1,NULL}, {0,1,NULL}, {0,1,NULL}, {0,1,NULL}, {0,1,NULL}};
 
 int8 timerCbFunQueEmpty()
 {
-	if((G_timerCbFunQue.head+1)%MAX_TIMER_CB_FUN == G_timerCbFunQue.tail){
+	if((G_timerCbFunQue.head)%MAX_TIMER_CB_FUN == G_timerCbFunQue.tail){
 	
 		 // queue empty
 		 return 1;
@@ -77,7 +80,8 @@ int8 timerCbFunQueFull()
 int8 timerCbFunExce(TIME_X timerx)
 {
 	uint8 head = G_timerCbFunQue.head;
-	timerEvnCbFun_t timerxEvnCbFun;
+	timerEvnCbFun_t timerxEvnCbFun = NULL;
+	
 	
 	if(timerCbFunQueEmpty()){
 	
@@ -86,12 +90,23 @@ int8 timerCbFunExce(TIME_X timerx)
 		
 	}
 	
-	while((head+1)%MAX_TIMER_CB_FUN != G_timerCbFunQue.tail){
+	while((head)%MAX_TIMER_CB_FUN != G_timerCbFunQue.tail){
 	
 			if(timerx == G_timerEvnCbFuns[head].timerx){
-			
-				timerxEvnCbFun = G_timerEvnCbFuns[head].timerxEvnCbFun;
-				timerxEvnCbFun(timerx, NULL);
+
+				G_timerEvnCbFuns[head].timeCnt++;
+				if(G_timerEvnCbFuns[head].timeCnt >= G_timerEvnCbFuns[G_timerCbFunQue.tail].timeoutExc){
+				
+						timerxEvnCbFun = G_timerEvnCbFuns[head].timerxEvnCbFun;
+						if(NULL != timerxEvnCbFun){
+							
+								
+							  timerxEvnCbFun(timerx);
+						}
+						
+						G_timerEvnCbFuns[head].timeCnt = 0;
+				}
+				
 			}
 			
 			head++;
@@ -101,18 +116,24 @@ int8 timerCbFunExce(TIME_X timerx)
 	return 0;
 }
 
-int8 registTimerCbFun(TIME_X timerx, timerEvnCbFun_t cb)
+int8 registTimerCbFun(TIME_X timerx, uint32 timeoutExc, timerEvnCbFun_t cb)
 {
+	int8 queID = 0;
 	if(timerCbFunQueFull()){
 	
 		 // queue full
-		 return -1;
+		 //return -1;
+		 
 	}
 	
-	G_timerCbFunQue.tail = (G_timerCbFunQue.tail+1)%MAX_TIMER_CB_FUN;
+	queID = G_timerCbFunQue.tail;
 	G_timerEvnCbFuns[G_timerCbFunQue.tail].timerx = timerx;
+	G_timerEvnCbFuns[G_timerCbFunQue.tail].timeoutExc = timeoutExc;
+	G_timerEvnCbFuns[G_timerCbFunQue.tail].timeCnt = 0;
 	G_timerEvnCbFuns[G_timerCbFunQue.tail].timerxEvnCbFun = cb;
-	return G_timerCbFunQue.tail;
+	G_timerCbFunQue.tail = (G_timerCbFunQue.tail+1)%MAX_TIMER_CB_FUN;
+	
+	return queID;
 }
 
 int8 unregistTimerCbFun(int8 cb_FunID)
@@ -126,6 +147,15 @@ int8 unregistTimerCbFun(int8 cb_FunID)
 	
 	G_timerEvnCbFuns[cb_FunID].timerx = 0;
 	G_timerEvnCbFuns[cb_FunID].timerxEvnCbFun = NULL;
+	G_timerCbFunQue.head = (G_timerCbFunQue.head+1)%MAX_TIMER_CB_FUN;
+	return 0;
+}
+
+uint8 timerRegist(TIME_X timerx, uint32 timeoutExc, timerEvnCbFun_t cb)
+{
+	
+	HW_Timer_config(timerx, 1);
+	registTimerCbFun(timerx, timeoutExc, cb);
 	return 0;
 }
 

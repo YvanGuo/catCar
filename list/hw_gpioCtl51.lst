@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_GPIOCTL51
@@ -62,7 +62,7 @@ line level    source
   50   2          if(GPIOx->Mode == GPIO_HighZ)   P0M1 |=  GPIOx->Pin,  P0M0 &= ~GPIOx->Pin;   //浮空输入
   51   2          if(GPIOx->Mode == GPIO_OUT_OD)    P0M1 |=  GPIOx->Pin,  P0M0 |=  GPIOx->Pin;   //开漏输出
   52   2          if(GPIOx->Mode == GPIO_OUT_PP)    P0M1 &= ~GPIOx->Pin,  P0M0 |=  GPIOx->Pin;   //推挽输出
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 2   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 2   
 
   53   2          #ifdef STC8XXXX
                   P0PU  = GPIOx->PullUp_3K7;    //内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
@@ -126,7 +126,7 @@ line level    source
  112   2        }
  113   1        if(GPIO == GPIO_P6)
  114   1        {
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 3   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 3   
 
  115   2          if(GPIOx->Mode == GPIO_PullUp)    P6M1 &= ~GPIOx->Pin,  P6M0 &= ~GPIOx->Pin;   //上拉准双向口
  116   2          if(GPIOx->Mode == GPIO_HighZ)   P6M1 |=  GPIOx->Pin,  P6M0 &= ~GPIOx->Pin;   //浮空输入
@@ -190,7 +190,7 @@ line level    source
  170   3          }
  171   2          default:
  172   2            GPIO_InitStructure.Mode = GPIO_OUT_PP;
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 4   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 4   
 
  173   2            break;
  174   2        }
@@ -254,7 +254,7 @@ line level    source
  232   3          }
  233   2          case 4:{
  234   3          
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 5   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 5   
 
  235   3              if(LOW == val){
  236   4              
@@ -318,7 +318,7 @@ line level    source
  294   2          case 0:{
  295   3              P0 |= gpioGruopPinBit;  // 读取前先使能内部弱上拉电阻
  296   3              _nop_();  // 等待两个时钟
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 6   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 6   
 
  297   3              _nop_();  //
  298   3              retVal = P0;
@@ -382,7 +382,7 @@ line level    source
  356   3              break;
  357   3          }
  358   2          
-C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 14:30:50 PAGE 7   
+C51 COMPILER V9.56.0.0   HW_GPIOCTL51                                                      03/17/2019 22:24:23 PAGE 7   
 
  359   2          default:
  360   2            break;

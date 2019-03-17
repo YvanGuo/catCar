@@ -3,9 +3,10 @@
 #include "pinCtl.h"
 #include "driver/51/hw_pwm.h"
 #include "timer.h"
+#include <stdio.h>
 
 typedef struct s_ServoCfg{
-    int16 pin;
+    uint8 pin;
     uint16 minPW;
     uint16 maxPW;
     int16 minAngle;
@@ -72,6 +73,30 @@ int16 servoAttached()
   return G_ServoCfg.pin != NOT_ATTACHED; 
 }
 
+void testTimerCb(TIME_X timerx)
+{
+
+	static u32 timeCnt = 0;
+	timeCnt++;
+	if(timeCnt > 1000){
+	
+		digitalWrite_common(LED_CTL_PIN, LOW);
+		printf("LED on\r\n");
+	}else{
+	
+		digitalWrite_common(LED_CTL_PIN, HIGH);
+		printf("LED off\r\n");
+	}
+	
+	if(timeCnt > 2000){
+	
+		timeCnt = 0;
+	}
+	
+	
+}
+
+
 int8 servoAttach(uint8 pin, uint16 minPulseWidth, uint16 maxPulseWidth, int16 minAngle, int16 maxAngle)
 {
 	if(servoAttached()){
@@ -85,10 +110,12 @@ int8 servoAttach(uint8 pin, uint16 minPulseWidth, uint16 maxPulseWidth, int16 mi
   G_ServoCfg.minAngle = minAngle;
   G_ServoCfg.maxAngle = maxAngle;
   pinMode_common(pin, PWM);
-	registTimerCbFun(TIMER_0, ServoPwmInterruptProc);
-	timerxStart(TIMER_0);
+	setServoCtlPin(G_ServoCfg.pin);
+	timerRegist(TIMER_0, 1, ServoPwmInterruptProc);
 	return 0;
 }
+
+
 
 void ServoDefaultInit()
 {
@@ -103,6 +130,7 @@ void ServoDefaultInit()
   G_ServoCfg.minAngle = SERVO_DEFAULT_MIN_ANGLE;
   G_ServoCfg.maxAngle = SERVO_DEFAULT_MAX_ANGLE;
   pinMode_common(G_ServoCfg.pin, PWM);
-	registTimerCbFun(TIMER_0, ServoPwmInterruptProc);
-	timerxStart(TIMER_0);
+	setServoCtlPin(G_ServoCfg.pin);
+	timerRegist(TIMER_0, 1, ServoPwmInterruptProc);
+	//timerRegist(TIMER_0, 1, testTimerCb);
 }

@@ -3,8 +3,9 @@
 
 
 #include	"common.h"
+#include  "hal/timer.h"
 
-void ServoPwmInterruptProc();
+void ServoPwmInterruptProc(TIME_X timerx);
 void resetServoPulCnt();
 void setServoPulseWidth(uint16 cnt);
 void setServoCtlPin(uint8 pin);
