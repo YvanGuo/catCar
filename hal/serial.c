@@ -46,28 +46,28 @@ int8 unregistSerialCbFun(int8 cb_FunID)
 	
 	G_serialEvnCbFuns[cb_FunID].serialx = 0;
 	G_serialEvnCbFuns[cb_FunID].serialxEvnCbFun = NULL;
-	
+	return 0;
 }
 
 int8 initSeriaX(SERIA_X seriaIndex, s_SeriaParam *param)
 {
-
+	return 0;
 }
 
 int8 uninitSeriaX(SERIA_X seriaIndex)
 {
 
-
+	return 0;
 }
 
 int32 serialRead(SERIA_X index, int8 *buff, int32 readSize, int32 timeOut)
 {
 
-
+	return 0;
 }
 
 int32 serialWrite(SERIA_X index, int8 *buff, int32 writeSize, int32 timeOut)
 {
 
-
+	return 0;
 }

@@ -2,6 +2,6 @@
 #define __BOARD_CONFIG_H__
 
 //#define ARDUINO_LIB
-#define STC
+#define STC15XXXX
 
 #endif

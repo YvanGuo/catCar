@@ -1,9 +1,9 @@
-C51 COMPILER V9.56.0.0   SERIAL                                                            03/16/2019 15:35:41 PAGE 1   
+C51 COMPILER V9.56.0.0   SERIAL                                                            03/17/2019 14:30:50 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SERIAL
 OBJECT MODULE PLACED IN .\list\serial.obj
-COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE hal\serial.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE hal\serial.c LARGE OPTIMIZE(9,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\
                     -list\serial.lst) TABS(2) OBJECT(.\list\serial.obj)
 
 line level    source
@@ -56,31 +56,29 @@ line level    source
   46   1        
   47   1        G_serialEvnCbFuns[cb_FunID].serialx = 0;
   48   1        G_serialEvnCbFuns[cb_FunID].serialxEvnCbFun = NULL;
-  49   1        
+  49   1        return 0;
   50   1      }
   51          
   52          int8 initSeriaX(SERIA_X seriaIndex, s_SeriaParam *param)
   53          {
-  54   1      
-C51 COMPILER V9.56.0.0   SERIAL                                                            03/16/2019 15:35:41 PAGE 2   
+  54   1        return 0;
+C51 COMPILER V9.56.0.0   SERIAL                                                            03/17/2019 14:30:50 PAGE 2   
 
   55   1      }
-*** WARNING C173 IN LINE 55 OF hal\serial.c: missing return-expression
 *** WARNING C280 IN LINE 52 OF hal\serial.c: 'seriaIndex': unreferenced local variable
 *** WARNING C280 IN LINE 52 OF hal\serial.c: 'param': unreferenced local variable
   56          
   57          int8 uninitSeriaX(SERIA_X seriaIndex)
   58          {
   59   1      
-  60   1      
+  60   1        return 0;
   61   1      }
-*** WARNING C173 IN LINE 61 OF hal\serial.c: missing return-expression
 *** WARNING C280 IN LINE 57 OF hal\serial.c: 'seriaIndex': unreferenced local variable
   62          
   63          int32 serialRead(SERIA_X index, int8 *buff, int32 readSize, int32 timeOut)
   64          {
   65   1      
-  66   1      
+  66   1        return 0;
   67   1      }
 *** WARNING C280 IN LINE 63 OF hal\serial.c: 'index': unreferenced local variable
 *** WARNING C280 IN LINE 63 OF hal\serial.c: 'buff': unreferenced local variable
@@ -90,21 +88,16 @@ line level    source
   69          int32 serialWrite(SERIA_X index, int8 *buff, int32 writeSize, int32 timeOut)
   70          {
   71   1      
-  72   1      
+  72   1        return 0;
   73   1      }
 *** WARNING C280 IN LINE 69 OF hal\serial.c: 'index': unreferenced local variable
 *** WARNING C280 IN LINE 69 OF hal\serial.c: 'buff': unreferenced local variable
 *** WARNING C280 IN LINE 69 OF hal\serial.c: 'writeSize': unreferenced local variable
 *** WARNING C280 IN LINE 69 OF hal\serial.c: 'timeOut': unreferenced local variable
-*** WARNING C291 IN LINE 50 OF hal\serial.c: not every exit path returns a value
-*** WARNING C290 IN LINE 55 OF hal\serial.c: missing return value
-*** WARNING C290 IN LINE 61 OF hal\serial.c: missing return value
-*** WARNING C290 IN LINE 67 OF hal\serial.c: missing return value
-*** WARNING C290 IN LINE 73 OF hal\serial.c: missing return value
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    234    ----
+   CODE SIZE        =    212    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     28      26
    PDATA SIZE       =   ----    ----
@@ -114,4 +107,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  18 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  11 WARNING(S),  0 ERROR(S)

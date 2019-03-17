@@ -1,9 +1,9 @@
-C51 COMPILER V9.56.0.0   HW_PWM                                                            03/16/2019 17:05:26 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/17/2019 14:30:51 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_PWM
 OBJECT MODULE PLACED IN .\list\hw_pwm.obj
-COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\51\hw_pwm.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PR
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\51\hw_pwm.c LARGE OPTIMIZE(9,SPEED) BROWSE DEBUG OBJECTEXTEND PR
                     -INT(.\list\hw_pwm.lst) TABS(2) OBJECT(.\list\hw_pwm.obj)
 
 line level    source
@@ -29,107 +29,124 @@ line level    source
   19          ******************************************/
   20          
   21          #include "hw_pwm.h"
-  22          #include "hal/pinCtl.h"
-  23          
-  24          static uint16 G_ServoPulCnt = 0;
-  25          static uint16 G_ServoPulseWidth = 15;
-  26          static uint16 G_ServoCtlPin = 0;
-  27          
-  28          void resetServoPulCnt()
-  29          {
-  30   1        G_ServoPulCnt = 0;
-  31   1      }
-  32          
-  33          void setServoPulseWidth(uint16 cnt)
-  34          {
-  35   1        G_ServoPulseWidth = cnt;
-  36   1      }
-  37          
-  38          void setServoCtlPin(uint8 pin)
-  39          {
-  40   1        G_ServoCtlPin = pin;
-  41   1      }
-  42          
-  43          
-  44          void ServoPwmInterruptProc()
-  45          {
-  46   1      
-  47   1        if(G_ServoPulCnt <= G_ServoPulseWidth){
-  48   2        
-  49   2          digitalWrite_common(G_ServoCtlPin, HIGH);
-  50   2        }else{
-  51   2        
-  52   2          digitalWrite_common(G_ServoCtlPin, LOW);
-  53   2        }
-  54   1        
-C51 COMPILER V9.56.0.0   HW_PWM                                                            03/16/2019 17:05:26 PAGE 2   
+  22          #include "hal/timer.h"
+  23          #include "hal/pinCtl.h"
+  24          #include "driver/51/hw_timer.h"
+  25          
+  26          static uint16 G_ServoPulCnt = 0;
+  27          static uint16 G_ServoPulseWidth = 15;
+  28          static uint16 G_ServoCtlPin = 0;
+  29          
+  30          void resetServoPulCnt()
+  31          {
+  32   1        G_ServoPulCnt = 0;
+  33   1      }
+  34          
+  35          void setServoPulseWidth(uint16 cnt)
+  36          {
+  37   1        G_ServoPulseWidth = cnt;
+  38   1      }
+  39          
+  40          void setServoCtlPin(uint8 pin)
+  41          {
+  42   1        G_ServoCtlPin = pin;
+  43   1      }
+  44          
+  45          
+  46          void ServoPwmInterruptProc(TIME_X timerx, void *userData)
+  47          {
+  48   1        if(TIMER_0 == timerx){
+  49   2        
+  50   2          HW_Time0Reload();
+  51   2        }else if(TIMER_1 == timerx){
+  52   2        
+  53   2          HW_Time1Reload();
+  54   2        }
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/17/2019 14:30:51 PAGE 2   
 
-  55   1        G_ServoPulCnt++;
-  56   1        if(G_ServoPulCnt >= 200){
-  57   2        
-  58   2            G_ServoPulCnt = 0;
-  59   2        }
-  60   1      
-  61   1        
-  62   1      }
-  63          
-  64          
-  65          void uartCmdProc(void *uartData)
-  66          {
-  67   1        static uint8 servoPulseWidth = 15;
-  68   1        uint8 *command = (uint8 *)uartData;
-  69   1        
-  70   1        switch(*command){
-  71   2        
-  72   2          case 'f':
-  73   2          {
-  74   3              servoPulseWidth++;
-  75   3              if(servoPulseWidth >= 25){
-  76   4              
-  77   4                servoPulseWidth = 25;
-  78   4                setServoPulseWidth(servoPulseWidth);
-  79   4              }
-  80   3              resetServoPulCnt();
-  81   3              break;
-  82   3          }
-  83   2          case 'g':
-  84   2          {
-  85   3              servoPulseWidth--;
-  86   3              if(servoPulseWidth <= 5){
-  87   4              
-  88   4                servoPulseWidth = 5;
-  89   4                setServoPulseWidth(servoPulseWidth);
-  90   4              }
-  91   3              resetServoPulCnt();
-  92   3              break;
-  93   3          }
-  94   2          case 'k':
-  95   2          {
-  96   3              servoPulseWidth = 15;
-  97   3              setServoPulseWidth(servoPulseWidth);
-  98   3              resetServoPulCnt();
-  99   3              break;
- 100   3          }
- 101   2          default:
- 102   2          {
- 103   3              break;
- 104   3          }
- 105   2        }
- 106   1        
- 107   1      }
+  55   1        
+  56   1        
+  57   1        if(G_ServoPulCnt <= G_ServoPulseWidth){
+  58   2        
+  59   2          digitalWrite_common(G_ServoCtlPin, HIGH);
+  60   2        }else{
+  61   2        
+  62   2          digitalWrite_common(G_ServoCtlPin, LOW);
+  63   2        }
+  64   1        
+  65   1        G_ServoPulCnt++;
+  66   1        if(G_ServoPulCnt >= 200){
+  67   2        
+  68   2            G_ServoPulCnt = 0;
+  69   2        }
+  70   1      
+  71   1        if(TIMER_0 == timerx){
+  72   2        
+  73   2          HW_Time0Start();
+  74   2        }else if(TIMER_1 == timerx){
+  75   2        
+  76   2          HW_Time1Start();
+  77   2        }
+  78   1      }
+*** WARNING C280 IN LINE 46 OF driver\51\hw_pwm.c: 'userData': unreferenced local variable
+  79          
+  80          
+  81          void uartCmdProc(void *uartData)
+  82          {
+  83   1        static uint8 servoPulseWidth = 15;
+  84   1        uint8 *command = (uint8 *)uartData;
+  85   1        
+  86   1        switch(*command){
+  87   2        
+  88   2          case 'f':
+  89   2          {
+  90   3              servoPulseWidth++;
+  91   3              if(servoPulseWidth >= 25){
+  92   4              
+  93   4                servoPulseWidth = 25;
+  94   4                setServoPulseWidth(servoPulseWidth);
+  95   4              }
+  96   3              resetServoPulCnt();
+  97   3              break;
+  98   3          }
+  99   2          case 'g':
+ 100   2          {
+ 101   3              servoPulseWidth--;
+ 102   3              if(servoPulseWidth <= 5){
+ 103   4              
+ 104   4                servoPulseWidth = 5;
+ 105   4                setServoPulseWidth(servoPulseWidth);
+ 106   4              }
+ 107   3              resetServoPulCnt();
+ 108   3              break;
+ 109   3          }
+ 110   2          case 'k':
+ 111   2          {
+ 112   3              servoPulseWidth = 15;
+ 113   3              setServoPulseWidth(servoPulseWidth);
+ 114   3              resetServoPulCnt();
+ 115   3              break;
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/17/2019 14:30:51 PAGE 3   
+
+ 116   3          }
+ 117   2          default:
+ 118   2          {
+ 119   3              break;
+ 120   3          }
+ 121   2        }
+ 122   1        
+ 123   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    172    ----
+   CODE SIZE        =    224    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      7    ----
+   XDATA SIZE       =      7       4
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.56.0.0   HW_PWM                                                            03/16/2019 17:05:26 PAGE 3   
-
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

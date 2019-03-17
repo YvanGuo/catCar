@@ -9,6 +9,8 @@ int32 pinMode_common(uint8 pin, PIN_MODE mode)
       return -1;
   }
 	HW_GPIO_config(pin, mode);
+	
+	return 0;
 }
 
 void analogWrite_common(uint8 pin, int32 val)

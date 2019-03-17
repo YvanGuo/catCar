@@ -18,8 +18,8 @@
 
 ******************************************/
 #include "timer.h"
-#include "hw_timer.h"
-#include "pwm.h"
+#include  "driver/51/hw_timer.h"
+#include "driver/51/hw_pwm.h"
 
 static uint8 G_ServoEnable = 0;
 #define MAX_TIMER_CB_FUN (6)
@@ -91,7 +91,7 @@ int8 timerCbFunExce(TIME_X timerx)
 			if(timerx == G_timerEvnCbFuns[head].timerx){
 			
 				timerxEvnCbFun = G_timerEvnCbFuns[head].timerxEvnCbFun;
-				timerxEvnCbFun();
+				timerxEvnCbFun(timerx, NULL);
 			}
 			
 			head++;
@@ -126,5 +126,34 @@ int8 unregistTimerCbFun(int8 cb_FunID)
 	
 	G_timerEvnCbFuns[cb_FunID].timerx = 0;
 	G_timerEvnCbFuns[cb_FunID].timerxEvnCbFun = NULL;
+	return 0;
+}
+
+void timerxStart(TIME_X timerx)
+{
+	if(TIMER_0 == timerx){
 	
+		HW_Time0Reload();
+		HW_Time0Start();
+	}
+	else if(TIMER_1 == timerx)
+	{
+		HW_Time1Reload();
+		HW_Time1Start();
+	}
+	
+}
+
+void timerxReload(TIME_X timerx)
+{
+	if(TIMER_0 == timerx){
+	
+		HW_Time0Reload();
+		
+	}
+	else if(TIMER_1 == timerx)
+	{
+		HW_Time1Reload();
+	
+	}
 }

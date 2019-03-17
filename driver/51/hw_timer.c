@@ -20,38 +20,132 @@
 #include "hal/timer.h"
 #include "hw_timer.h"
 #include "hw_pwm.h"
+#include <stdio.h>
 
-
-void Time0Reload()
+void HW_Time0Start()
 {
+	//TR0 = 1;
+	Timer0_Run();
+	Timer0_InterruptEnable();
+}
 
-	TR0 = 0;
+void HW_Time0Reload()
+{
+	//TR0 = 0;
+	Timer0_Stop();
 	TH0 = 0xff;
 	TL0 = 0xa4;
-
 }
 
-void Time0Start()
+void HW_Time1Start()
+{
+	//TR0 = 1;
+	Timer1_Run();
+	Timer1_InterruptEnable();
+}
+
+void HW_Time1Reload()
+{
+	//TR0 = 0;
+	Timer1_Stop();
+	TH1 = 0xff;
+	TL1 = 0xa4;
+}
+
+#if 0
+
+void HW_TimexStart(TIME_X timerx)
+{
+	switch(timerx){
+		case TIMER_0:{
+		
+			TR0 = 1;
+			break;
+		}
+		case TIMER_1:{
+			
+			TR1 = 1;
+			break;
+		}
+		case TIMER_2:{
+		
+			TR2 = 1;
+			break;
+		}
+		case TIMER_3:{
+		
+			TR3 = 1;
+			break;
+		}
+		case TIMER_4:{
+		
+			TR4 = 1;
+			break;
+		}
+	}
+	
+}
+
+void HW_TimexReload(TIME_X timerx)
 {
 
-	TR0 = 1;
+	
+	switch(timerx){
+		case TIMER_0:{
+		
+			TR0 = 0;
+			TH0 = 0xff;
+			TL0 = 0xa4;
+			break;
+		}
+		case TIMER_1:{
+			
+			TR1 = 1;
+			TH1 = 0xff;
+			TL1 = 0xa4;
+			break;
+		}
+		case TIMER_2:{
+		
+			TR2 = 1;
+			TH2 = 0xff;
+			TL2 = 0xa4;
+			break;
+		}
+		case TIMER_3:{
+		
+			TR3 = 1;
+			TH3 = 0xff;
+			TL3 = 0xa4;
+			break;
+		}
+		case TIMER_4:{
+		
+			TR4 = 0;
+			TH4 = 0xff;
+			TL4 = 0xa4;
+			break;
+		}
+	}
 }
+#endif
 
-void Time0_Int() interrupt 1
+
+void Time0_Int() interrupt TIMER0_VECTOR
 {
 
 	if(timerCbFunQueEmpty()){
 	
 		 // queue empty
-		 return;
+		 //return;
 	}
-	
+	printf("in Time0_Int tttt \r\n");
 	timerCbFunExce(TIMER_0);
 	
 
 }
 
-void Time1_Int() interrupt 3
+void Time1_Int() interrupt TIMER1_VECTOR
 {
 
 	if(timerCbFunQueEmpty()){
@@ -60,12 +154,13 @@ void Time1_Int() interrupt 3
 		 return;
 	}
 	
+	printf("in Time1_Int tttt \r\n");
 	timerCbFunExce(TIMER_1);
 	
 
 }
 
-void Time2_Int() interrupt 12
+void Time2_Int() interrupt TIMER2_VECTOR
 {
 
 	if(timerCbFunQueEmpty()){
@@ -79,7 +174,7 @@ void Time2_Int() interrupt 12
 
 }
 
-void Time3_Int() interrupt 19
+void Time3_Int() interrupt TIMER3_VECTOR
 {
 
 	if(timerCbFunQueEmpty()){
@@ -93,7 +188,7 @@ void Time3_Int() interrupt 19
 
 }
 
-void Time4_Int() interrupt 20
+void Time4_Int() interrupt TIMER4_VECTOR
 {
 
 	if(timerCbFunQueEmpty()){

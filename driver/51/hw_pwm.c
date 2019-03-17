@@ -19,7 +19,9 @@
 ******************************************/
 
 #include "hw_pwm.h"
+#include "hal/timer.h"
 #include "hal/pinCtl.h"
+#include "driver/51/hw_timer.h"
 
 static uint16 G_ServoPulCnt = 0;
 static uint16 G_ServoPulseWidth = 15;
@@ -41,9 +43,17 @@ void setServoCtlPin(uint8 pin)
 }
 
 
-void ServoPwmInterruptProc()
+void ServoPwmInterruptProc(TIME_X timerx, void *userData)
 {
-
+	if(TIMER_0 == timerx){
+	
+		HW_Time0Reload();
+	}else if(TIMER_1 == timerx){
+	
+		HW_Time1Reload();
+	}
+	
+	
 	if(G_ServoPulCnt <= G_ServoPulseWidth){
 	
 		digitalWrite_common(G_ServoCtlPin, HIGH);
@@ -58,7 +68,13 @@ void ServoPwmInterruptProc()
 			G_ServoPulCnt = 0;
 	}
 
+	if(TIMER_0 == timerx){
 	
+		HW_Time0Start();
+	}else if(TIMER_1 == timerx){
+	
+		HW_Time1Start();
+	}
 }
 
 

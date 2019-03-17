@@ -41,15 +41,19 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 {
 	if((GPIO > GPIO_P7) || (GPIOx->Mode > GPIO_OUT_PP))		return 1;	//错误
 
+	#ifdef STC8XXXX
 	EAXSFR();	//访问扩展SFR(XSFR)
+	#endif
 	if(GPIO == GPIO_P0)
 	{
 		if(GPIOx->Mode == GPIO_PullUp)		P0M1 &= ~GPIOx->Pin,	P0M0 &= ~GPIOx->Pin;	 //上拉准双向口
 		if(GPIOx->Mode == GPIO_HighZ)		P0M1 |=  GPIOx->Pin,	P0M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P0M1 |=  GPIOx->Pin,	P0M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P0M1 &= ~GPIOx->Pin,	P0M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P0PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P0NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
 	if(GPIO == GPIO_P1)
 	{
@@ -57,8 +61,10 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P1M1 |=  GPIOx->Pin,	P1M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P1M1 |=  GPIOx->Pin,	P1M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P1M1 &= ~GPIOx->Pin,	P1M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P1PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P1NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
 	if(GPIO == GPIO_P2)
 	{
@@ -66,8 +72,10 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P2M1 |=  GPIOx->Pin,	P2M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P2M1 |=  GPIOx->Pin,	P2M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P2M1 &= ~GPIOx->Pin,	P2M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P2PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P2NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
 	if(GPIO == GPIO_P3)
 	{
@@ -75,8 +83,10 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P3M1 |=  GPIOx->Pin,	P3M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P3M1 |=  GPIOx->Pin,	P3M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P3M1 &= ~GPIOx->Pin,	P3M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P3PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P3NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
 	if(GPIO == GPIO_P4)
 	{
@@ -84,8 +94,10 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P4M1 |=  GPIOx->Pin,	P4M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P4M1 |=  GPIOx->Pin,	P4M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P4M1 &= ~GPIOx->Pin,	P4M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P4PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P4NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
 	if(GPIO == GPIO_P5)
 	{
@@ -93,8 +105,10 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P5M1 |=  GPIOx->Pin,	P5M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P5M1 |=  GPIOx->Pin,	P5M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P5M1 &= ~GPIOx->Pin,	P5M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P5PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P5NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
 	if(GPIO == GPIO_P6)
 	{
@@ -102,8 +116,10 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P6M1 |=  GPIOx->Pin,	P6M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P6M1 |=  GPIOx->Pin,	P6M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P6M1 &= ~GPIOx->Pin,	P6M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P6PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P6NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	} 
 	if(GPIO == GPIO_P7)
 	{
@@ -111,10 +127,15 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		if(GPIOx->Mode == GPIO_HighZ)		P7M1 |=  GPIOx->Pin,	P7M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P7M1 |=  GPIOx->Pin,	P7M0 |=  GPIOx->Pin;	 //开漏输出
 		if(GPIOx->Mode == GPIO_OUT_PP)		P7M1 &= ~GPIOx->Pin,	P7M0 |=  GPIOx->Pin;	 //推挽输出
+		#ifdef STC8XXXX
 		P7PU  = GPIOx->PullUp_3K7;		//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 		P7NCS = GPIOx->SchmittDisable;	//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+		#endif
 	}
+	
+	#ifdef STC8XXXX
 	EAXRAM();	//访问扩展RAM(XRAM)
+	#endif
 	return 0;	//成功
 }
 

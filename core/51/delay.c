@@ -36,7 +36,14 @@ void  delay_ms(u8 ms)
 	u16 i;
 	do
 	{
+		#ifdef STC8XXXX
 		i = MAIN_Fosc / 10000;
+		#endif
+		
+		#ifdef STC15XXXX
+		i = MAIN_Fosc / 13000;
+		#endif
+		
 		while(--i)	;
 	}while(--ms);
 }

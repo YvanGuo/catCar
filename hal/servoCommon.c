@@ -12,11 +12,12 @@ typedef struct s_ServoCfg{
     int16 maxAngle;
 }s_ServoCfg;
 
-static s_ServoCfg G_ServoCfg;
+static s_ServoCfg G_ServoCfg = {-1, -1, -1, -1, -1};
 
 static void resetFields(void)
 {
-  resetServoPulCnt();
+	setServoPulseWidth(15);
+  
 }
 
 uint16 servoReadMicroseconds()
@@ -41,7 +42,15 @@ int32 servoRead()
 
 void servoWrite(int32 angle)
 {
-  
+	uint16 pulseWidth = 5;
+	
+  if(angle < 0 || angle > 180){
+	
+		return;
+	}
+	
+	pulseWidth = 5+angle/9;
+	
   setServoPulseWidth(pulseWidth);
 }
 
@@ -67,7 +76,7 @@ int8 servoAttach(uint8 pin, uint16 minPulseWidth, uint16 maxPulseWidth, int16 mi
 {
 	if(servoAttached()){
 	
-		return 0;
+		//return 0;
 	}
 	
   G_ServoCfg.pin = pin;
@@ -77,6 +86,7 @@ int8 servoAttach(uint8 pin, uint16 minPulseWidth, uint16 maxPulseWidth, int16 mi
   G_ServoCfg.maxAngle = maxAngle;
   pinMode_common(pin, PWM);
 	registTimerCbFun(TIMER_0, ServoPwmInterruptProc);
+	timerxStart(TIMER_0);
 	return 0;
 }
 
@@ -84,7 +94,7 @@ void ServoDefaultInit()
 {
 	if(servoAttached()){
 	
-		return;
+		//return;
 	}
 	
   G_ServoCfg.pin = SERVO_CTL_PIN;
@@ -94,4 +104,5 @@ void ServoDefaultInit()
   G_ServoCfg.maxAngle = SERVO_DEFAULT_MAX_ANGLE;
   pinMode_common(G_ServoCfg.pin, PWM);
 	registTimerCbFun(TIMER_0, ServoPwmInterruptProc);
+	timerxStart(TIMER_0);
 }

@@ -1,8 +1,9 @@
-#ifndef __HW_TIMER_H__
-#define __HW_TIMER_H__
+#ifndef __TIMER_H__
+#define __TIMER_H__
 
 
 #include	"common.h"
+
 
 typedef enum{
 
@@ -14,7 +15,7 @@ typedef enum{
 	
 }TIME_X;
 
-typedef void(*timerEvnCbFun_t)(void *);
+typedef void(*timerEvnCbFun_t)(TIME_X , void *);
 
 int8 timerCbFunQueEmpty();
 int8 timerCbFunQueFull();
@@ -22,5 +23,9 @@ int8 timerCbFunExce(TIME_X timerx);
 
 int8 registTimerCbFun(TIME_X timerx, timerEvnCbFun_t cb);
 int8 unregistTimerCbFun(int8 cb_FunID);
+
+
+void timerxStart(TIME_X timerx);
+void timerxReload(TIME_X timerx);
 
 #endif

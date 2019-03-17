@@ -1,9 +1,9 @@
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/16/2019 17:05:26 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_TIMER
 OBJECT MODULE PLACED IN .\list\hw_timer.obj
-COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\51\hw_timer.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND 
+COMPILER INVOKED BY: E:\keil_c51\C51\BIN\C51.EXE driver\51\hw_timer.c LARGE OPTIMIZE(9,SPEED) BROWSE DEBUG OBJECTEXTEND 
                     -PRINT(.\list\hw_timer.lst) TABS(2) OBJECT(.\list\hw_timer.obj)
 
 line level    source
@@ -30,104 +30,201 @@ line level    source
   20          #include "hal/timer.h"
   21          #include "hw_timer.h"
   22          #include "hw_pwm.h"
-  23          
+  23          #include <stdio.h>
   24          
-  25          void Time0Reload()
+  25          void HW_Time0Start()
   26          {
-  27   1      
-  28   1        TR0 = 0;
-  29   1        TH0 = 0xff;
-  30   1        TL0 = 0xa4;
-  31   1      
-  32   1      }
-  33          
-  34          void Time0Start()
-  35          {
-  36   1      
-  37   1        TR0 = 1;
+  27   1        //TR0 = 1;
+  28   1        Timer0_Run();
+  29   1        Timer0_InterruptEnable();
+  30   1      }
+  31          
+  32          void HW_Time0Reload()
+  33          {
+  34   1        //TR0 = 0;
+  35   1        Timer0_Stop();
+  36   1        TH0 = 0xff;
+  37   1        TL0 = 0xa4;
   38   1      }
   39          
-  40          void Time0_Int() interrupt 1
+  40          void HW_Time1Start()
   41          {
-  42   1      
-  43   1        if(timerCbFunQueEmpty()){
-  44   2        
-  45   2           // queue empty
-  46   2           return;
-  47   2        }
-  48   1        
-  49   1        timerCbFunExce(TIMER_0);
-  50   1        
-  51   1      
-  52   1      }
-  53          
-  54          void Time1_Int() interrupt 3
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/16/2019 17:05:26 PAGE 2   
+  42   1        //TR0 = 1;
+  43   1        Timer1_Run();
+  44   1        Timer1_InterruptEnable();
+  45   1      }
+  46          
+  47          void HW_Time1Reload()
+  48          {
+  49   1        //TR0 = 0;
+  50   1        Timer1_Stop();
+  51   1        TH1 = 0xff;
+  52   1        TL1 = 0xa4;
+  53   1      }
+  54          
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 2   
 
-  55          {
-  56   1      
-  57   1        if(timerCbFunQueEmpty()){
-  58   2        
-  59   2           // queue empty
-  60   2           return;
-  61   2        }
-  62   1        
-  63   1        timerCbFunExce(TIMER_1);
-  64   1        
-  65   1      
-  66   1      }
-  67          
-  68          void Time2_Int() interrupt 12
-  69          {
-  70   1      
-  71   1        if(timerCbFunQueEmpty()){
-  72   2        
-  73   2           // queue empty
-  74   2           return;
-  75   2        }
-  76   1        
-  77   1        timerCbFunExce(TIMER_2);
-  78   1        
-  79   1      
-  80   1      }
-  81          
-  82          void Time3_Int() interrupt 19
-  83          {
-  84   1      
-  85   1        if(timerCbFunQueEmpty()){
-  86   2        
-  87   2           // queue empty
-  88   2           return;
-  89   2        }
-  90   1        
-  91   1        timerCbFunExce(TIMER_3);
-  92   1        
-  93   1      
-  94   1      }
-  95          
-  96          void Time4_Int() interrupt 20
-  97          {
-  98   1      
-  99   1        if(timerCbFunQueEmpty()){
- 100   2        
- 101   2           // queue empty
- 102   2           return;
- 103   2        }
- 104   1        
- 105   1        timerCbFunExce(TIMER_4);
- 106   1        
- 107   1      
- 108   1      }
+  55          #if 0
+              
+              void HW_TimexStart(TIME_X timerx)
+              {
+                switch(timerx){
+                  case TIMER_0:{
+                  
+                    TR0 = 1;
+                    break;
+                  }
+                  case TIMER_1:{
+                    
+                    TR1 = 1;
+                    break;
+                  }
+                  case TIMER_2:{
+                  
+                    TR2 = 1;
+                    break;
+                  }
+                  case TIMER_3:{
+                  
+                    TR3 = 1;
+                    break;
+                  }
+                  case TIMER_4:{
+                  
+                    TR4 = 1;
+                    break;
+                  }
+                }
+                
+              }
+              
+              void HW_TimexReload(TIME_X timerx)
+              {
+              
+                
+                switch(timerx){
+                  case TIMER_0:{
+                  
+                    TR0 = 0;
+                    TH0 = 0xff;
+                    TL0 = 0xa4;
+                    break;
+                  }
+                  case TIMER_1:{
+                    
+                    TR1 = 1;
+                    TH1 = 0xff;
+                    TL1 = 0xa4;
+                    break;
+                  }
+                  case TIMER_2:{
+                  
+                    TR2 = 1;
+                    TH2 = 0xff;
+                    TL2 = 0xa4;
+                    break;
+                  }
+                  case TIMER_3:{
+                  
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 3   
+
+                    TR3 = 1;
+                    TH3 = 0xff;
+                    TL3 = 0xa4;
+                    break;
+                  }
+                  case TIMER_4:{
+                  
+                    TR4 = 0;
+                    TH4 = 0xff;
+                    TL4 = 0xa4;
+                    break;
+                  }
+                }
+              }
+              #endif
+ 132          
+ 133          
+ 134          void Time0_Int() interrupt TIMER0_VECTOR
+ 135          {
+ 136   1      
+ 137   1        if(timerCbFunQueEmpty()){
+ 138   2        
+ 139   2           // queue empty
+ 140   2           //return;
+ 141   2        }
+ 142   1        printf("in Time0_Int tttt \r\n");
+ 143   1        timerCbFunExce(TIMER_0);
+ 144   1        
+ 145   1      
+ 146   1      }
+ 147          
+ 148          void Time1_Int() interrupt TIMER1_VECTOR
+ 149          {
+ 150   1      
+ 151   1        if(timerCbFunQueEmpty()){
+ 152   2        
+ 153   2           // queue empty
+ 154   2           return;
+ 155   2        }
+ 156   1        
+ 157   1        printf("in Time1_Int tttt \r\n");
+ 158   1        timerCbFunExce(TIMER_1);
+ 159   1        
+ 160   1      
+ 161   1      }
+ 162          
+ 163          void Time2_Int() interrupt TIMER2_VECTOR
+ 164          {
+ 165   1      
+ 166   1        if(timerCbFunQueEmpty()){
+ 167   2        
+ 168   2           // queue empty
+ 169   2           return;
+ 170   2        }
+ 171   1        
+ 172   1        timerCbFunExce(TIMER_2);
+ 173   1        
+ 174   1      
+ 175   1      }
+ 176          
+ 177          void Time3_Int() interrupt TIMER3_VECTOR
+ 178          {
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 14:30:51 PAGE 4   
+
+ 179   1      
+ 180   1        if(timerCbFunQueEmpty()){
+ 181   2        
+ 182   2           // queue empty
+ 183   2           return;
+ 184   2        }
+ 185   1        
+ 186   1        timerCbFunExce(TIMER_3);
+ 187   1        
+ 188   1      
+ 189   1      }
+ 190          
+ 191          void Time4_Int() interrupt TIMER4_VECTOR
+ 192          {
+ 193   1      
+ 194   1        if(timerCbFunQueEmpty()){
+ 195   2        
+ 196   2           // queue empty
+ 197   2           return;
+ 198   2        }
+ 199   1        
+ 200   1        timerCbFunExce(TIMER_4);
+ 201   1        
+ 202   1      
+ 203   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    347    ----
-   CONSTANT SIZE    =   ----    ----
+   CODE SIZE        =    378    ----
+   CONSTANT SIZE    =     42    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/16/2019 17:05:26 PAGE 3   
-
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
