@@ -58,8 +58,8 @@ void Time0_Int() interrupt TIMER0_VECTOR
 {
 
 	//printf("in Time0_Int tttt \r\n");
-	//ServoPwmInterruptProc(0);
-	timerCbFunExce(TIMER_0);
+	ServoPwmInterruptProc(0);
+	//timerCbFunExce(TIMER_0);
 	
 }
 

@@ -8,6 +8,7 @@
 #define	COM_RX1_Lenth	40
 #define	COM_TX2_Lenth	128
 #define	COM_RX2_Lenth	128
+#define	RX2_Length	128		/* 接收缓冲长度 */
 
 typedef enum {
 
@@ -71,13 +72,17 @@ extern	u8 	idata RX1_Buffer[COM_RX1_Lenth];	//接收缓冲
 
 u8	USART_Configuration(UART_ID UARTx, COMx_InitDefine *COMx);
 
+void PrintString2(u8 *puts);
 void PrintString1(u8 *puts);
 //void PrintString2(u8 *puts);
 void	HW_serialConfig(UART_ID UARTx, u32 UART_BaudRate);
 uint32 HW_serialWrite(UART_ID UARTx, uint8 *wdata, uint32 wsize);
+uint32 HW_serialRead(UART_ID UARTx, uint8 *wdata, uint32 wsize, uint32 timeout);
 
+void TX1_write2buff(u8 dat);	//写入发送缓冲，指针+1
 //void COMx_write2buff(COMx_Define *COMx, u8 dat);	//写入发送缓冲，指针+1
 //void PrintString(COMx_Define *COMx, u8 *puts);
 
+void UART2_config(u32 brt, u8 timer, u8 io);
 
 #endif

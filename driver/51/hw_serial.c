@@ -27,8 +27,11 @@
 COMx_Define	COM1,COM2;
 u8	idata TX1_Buffer[COM_TX1_Lenth];	//发送缓冲
 u8 	idata RX1_Buffer[COM_RX1_Lenth];	//接收缓冲
-//u8 xdata TX2_Buffer[COM_TX2_Lenth];	//发送缓冲
-//u8 xdata RX2_Buffer[COM_RX2_Lenth];	//接收缓冲
+u8 xdata TX2_Buffer[COM_TX2_Lenth];	//发送缓冲
+u8 xdata RX2_Buffer[COM_RX2_Lenth];	//接收缓冲
+
+u8	TX2_read,RX2_write;	//读写索引(指针).
+bit	B_TX2_Busy;	// 发送忙标志
 
 u8 USART_Configuration(UART_ID UARTx, COMx_InitDefine *COMx)
 {
@@ -102,6 +105,74 @@ u8 USART_Configuration(UART_ID UARTx, COMx_InitDefine *COMx)
 		if(COMx->UART_RXD_TXD_Short == ENABLE)	PCON2 |=  (1<<4);	//内部短路RXD与TXD, 做中继, ENABLE,DISABLE
 		else									PCON2 &= ~(1<<4);
 		return	0;
+	}else if(UARTx == USART2){
+	
+		COM2.id = 2;
+		COM2.TX_read    = 0;
+		COM2.TX_write   = 0;
+		COM2.B_TX_busy  = 0;
+		COM2.RX_Cnt     = 0;
+		COM2.RX_TimeOut = 0;
+		COM2.B_RX_OK    = 0;
+		for(i=0; i<COM_TX2_Lenth; i++)	TX2_Buffer[i] = 0;
+		for(i=0; i<COM_RX2_Lenth; i++)	RX2_Buffer[i] = 0;
+
+		if(COMx->UART_Mode > UART_9bit_BRTx)	return 1;	//模式错误
+		if(COMx->UART_Polity == PolityHigh)		PS = 1;	//高优先级中断
+		else									PS = 0;	//低优先级中断
+		S2CON = (S2CON & 0x3f) | COMx->UART_Mode;
+		if((COMx->UART_Mode == UART_9bit_BRTx) ||(COMx->UART_Mode == UART_8bit_BRTx))	//可变波特率
+		{
+			j = (MAIN_Fosc / 4) / COMx->UART_BaudRate;	//按1T计算
+			if(j >= 65536UL)	return 2;	//错误
+			j = 65536UL - j;
+			if(COMx->UART_BRT_Use == BRT_Timer1)
+			{
+				TR1 = 0;
+				AUXR &= ~0x01;		//S1 BRT Use Timer1;
+				TMOD &= ~(1<<6);	//Timer1 set As Timer
+				TMOD &= ~0x30;		//Timer1_16bitAutoReload;
+				AUXR |=  (1<<6);	//Timer1 set as 1T mode
+				TH1 = (u8)(j>>8);
+				TL1 = (u8)j;
+				ET1 = 0;	//禁止中断
+				TMOD &= ~0x40;	//定时
+				INT_CLKO &= ~0x02;	//不输出时钟
+				TR1  = 1;
+			}
+			else if(COMx->UART_BRT_Use == BRT_Timer2)
+			{
+				AUXR &= ~(1<<4);	//Timer stop
+				AUXR |= 0x01;		//S1 BRT Use Timer2;
+				AUXR &= ~(1<<3);	//Timer2 set As Timer
+				AUXR |=  (1<<2);	//Timer2 set as 1T mode
+				TH2 = (u8)(j>>8);
+				TL2 = (u8)j;
+				IE2  &= ~(1<<2);	//禁止中断
+				AUXR &= ~(1<<3);	//定时
+				AUXR |=  (1<<4);	//Timer run enable
+			}
+			else return 2;	//错误
+		}
+		else if(COMx->UART_Mode == UART_ShiftRight)
+		{
+			if(COMx->BaudRateDouble == ENABLE)	AUXR |=  (1<<5);	//固定波特率SysClk/2
+			else								AUXR &= ~(1<<5);	//固定波特率SysClk/12
+		}
+		else if(COMx->UART_Mode == UART_9bit)	//固定波特率SysClk*2^SMOD/64
+		{
+			if(COMx->BaudRateDouble == ENABLE)	PCON |=  (1<<7);	//固定波特率SysClk/32
+			else								PCON &= ~(1<<7);	//固定波特率SysClk/64
+		}
+		if(COMx->UART_Interrupt == ENABLE)	ES = 1;	//允许中断
+		else								ES = 0;	//禁止中断
+		if(COMx->UART_RxEnable == ENABLE)	REN = 1;	//允许接收
+		else								REN = 0;	//禁止接收
+		P_SW2 = (P_SW2 & 0x3f) | (COMx->UART_P_SW & 0xc0);	//切换IO
+		if(COMx->UART_RXD_TXD_Short == ENABLE)	PCON2 |=  (1<<4);	//内部短路RXD与TXD, 做中继, ENABLE,DISABLE
+		else									PCON2 &= ~(1<<4);
+		return	0;
+	
 	}
 	return 3;	//其它错误
 }
@@ -109,7 +180,7 @@ u8 USART_Configuration(UART_ID UARTx, COMx_InitDefine *COMx)
 
 /*************** 装载串口发送缓冲 *******************************/
 
-static void TX1_write2buff(u8 dat)	//写入发送缓冲，指针+1
+void TX1_write2buff(u8 dat)	//写入发送缓冲，指针+1
 {
 	TX1_Buffer[COM1.TX_write] = dat;	//装发送缓冲
 	if(++COM1.TX_write >= COM_TX1_Lenth)	COM1.TX_write = 0;
@@ -140,6 +211,53 @@ void PrintString1(u8 *puts)
 {
     for (; *puts != 0;	puts++)  TX1_write2buff(*puts); 	//遇到停止符0结束
 }
+
+
+//========================================================================
+// 函数: SetTimer2Baudraye(u16 dat)
+// 描述: 设置Timer2做波特率发生器。
+// 参数: dat: Timer2的重装值.
+// 返回: none.
+// 版本: VER1.0
+// 日期: 2018-4-2
+// 备注: 
+//========================================================================
+void	SetTimer2Baudraye(u16 dat)	// 选择波特率, 2: 使用Timer2做波特率, 其它值: 使用Timer1做波特率.
+{
+	AUXR &= ~(1<<4);	//Timer stop
+	AUXR &= ~(1<<3);	//Timer2 set As Timer
+	AUXR |=  (1<<2);	//Timer2 set as 1T mode
+	TH2 = (u8)(dat >> 8);
+	TL2 = (u8)dat;
+	IE2  &= ~(1<<2);	//禁止中断
+	AUXR |=  (1<<4);	//Timer run enable
+}
+
+void	UART2_config(u32 brt, u8 timer, u8 io)	// brt: 通信波特率,  timer=2: 波特率使用定时器2, 其它值: 使用Timer2做波特率. io=0: 串口2切换到P1.0 P1.1,  =1: 切换到P4.6 P4.7.
+{
+	brt = 65536UL - (MAIN_Fosc / 4) / brt;
+	if(timer == 2)	SetTimer2Baudraye((u16)brt);	//波特率使用定时器2
+	else			SetTimer2Baudraye((u16)brt);	//波特率使用定时器2		两个条件都使用Timer2, 是为了跟另外串口函数兼容
+
+	S2CON &= ~(1<<7);	// 8位数据, 1位起始位, 1位停止位, 无校验
+	IE2   |= 1;			//允许中断
+	S2CON |= (1<<4);	//允许接收
+	if(io == 1)	{	P_SW2 |= 1;		P4n_push_pull(0x80);}	//切换到 P4.6 P4.7
+	else		{	P_SW2 &= ~1;	P1n_push_pull(0x02);}	//切换到 P1.0 P1.1
+	
+	RX2_write   = 0;
+}
+
+void PrintString2(u8 *puts)
+{
+    for (; *puts != 0;	puts++)
+	{
+		B_TX2_Busy = 1;		//标志发送忙
+		S2BUF = *puts;		//发一个字节
+		while(B_TX2_Busy);	//等待发送完成
+	}
+}
+
 
 char putchar (char c)   
 {        
@@ -174,6 +292,33 @@ void UART1_int (void) interrupt UART1_VECTOR
 	}
 }
 
+//========================================================================
+// 函数: void UART2_int (void) interrupt UART2_VECTOR
+// 描述: 串口2中断函数
+// 参数: none.
+// 返回: none.
+// 版本: VER1.0
+// 日期: 2018-4-2
+// 备注: 
+//========================================================================
+void UART2_int (void) interrupt UART2_VECTOR
+{
+	if(RI2)
+	{
+		CLR_RI2();
+		RX2_Buffer[RX2_write] = S2BUF;
+		if(++RX2_write >= RX2_Length)	RX2_write = 0;
+	}
+
+	if(TI2)
+	{
+		CLR_TI2();
+		B_TX2_Busy = 0;
+	}
+
+}
+
+
 
 void	HW_serialConfig(UART_ID UARTx, u32 UART_BaudRate)
 {
@@ -197,13 +342,26 @@ void	HW_serialConfig(UART_ID UARTx, u32 UART_BaudRate)
 	COMx_InitStructure.UART_RXD_TXD_Short = DISABLE;		//内部短路RXD与TXD, 做中继, ENABLE,DISABLE
 	USART_Configuration(UARTx, &COMx_InitStructure);		//初始化串口1 USART1,USART2
 
-	PrintString1("STC15F2K60S2 UART Test Prgramme ---- dbug2!\r\n");	//SUART1发送一个字符串
+	//PrintString1("STC15F2K60S2 UART Test Prgramme ---- dbug2!\r\n");	//SUART1发送一个字符串
 }
 
 uint32 HW_serialRead(UART_ID UARTx, uint8 *wdata, uint32 wsize, uint32 timeout)
 {
 	uint32 readx = 0;
 	uint32 i = 0;
+	if(COM1.RX_TimeOut > 0)		//超时计数
+	{
+		if(--COM1.RX_TimeOut == 0)
+		{
+			if(COM1.RX_Cnt > 0)
+			{
+				for(i=0; i<COM1.RX_Cnt; i++)	TX1_write2buff(RX1_Buffer[i]);	//收到的数据原样返回
+			}
+			COM1.RX_Cnt = 0;
+		}
+	}
+		#if 0
+	
 	
 	while (timeout--)
 	{
@@ -218,7 +376,8 @@ uint32 HW_serialRead(UART_ID UARTx, uint8 *wdata, uint32 wsize, uint32 timeout)
 					{
 						for(i=0; i<COM1.RX_Cnt; i++){
 							
-							TX1_write2buff(RX1_Buffer[readx++]);	//收到的数据
+							//TX1_write2buff(RX1_Buffer[readx++]);	//收到的数据
+							wdata[i] = RX1_Buffer[readx++];
 							if(readx >= wsize){
 							
 								COM1.RX_Cnt = COM1.RX_Cnt - i;
@@ -235,6 +394,8 @@ uint32 HW_serialRead(UART_ID UARTx, uint8 *wdata, uint32 wsize, uint32 timeout)
 			//TX2_write2buff(wdata[i]);
 		}
 	}
+	#endif
+	
 	
 	return 0;
 

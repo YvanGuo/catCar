@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   TIMER                                                             03/17/2019 22:27:44 PAGE 1   
+C51 COMPILER V9.56.0.0   TIMER                                                             03/24/2019 21:50:21 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE TIMER
@@ -62,7 +62,7 @@ line level    source
   52          s_timerCbFunCfg G_timerEvnCbFuns[MAX_TIMER_CB_FUN] = {{0,1,NULL}, {0,1,NULL}, {0,1,NULL}, {0,1,NULL}, {0,1
              -,NULL}};
   53          
-C51 COMPILER V9.56.0.0   TIMER                                                             03/17/2019 22:27:44 PAGE 2   
+C51 COMPILER V9.56.0.0   TIMER                                                             03/24/2019 21:50:21 PAGE 2   
 
   54          int8 timerCbFunQueEmpty()
   55          {
@@ -126,7 +126,7 @@ line level    source
  113   2          
  114   2        }
  115   1        
-C51 COMPILER V9.56.0.0   TIMER                                                             03/17/2019 22:27:44 PAGE 3   
+C51 COMPILER V9.56.0.0   TIMER                                                             03/24/2019 21:50:21 PAGE 3   
 
  116   1        return 0;
  117   1      }
@@ -190,7 +190,7 @@ line level    source
  175   1      }
  176          
  177          void timerxReload(TIME_X timerx)
-C51 COMPILER V9.56.0.0   TIMER                                                             03/17/2019 22:27:44 PAGE 4   
+C51 COMPILER V9.56.0.0   TIMER                                                             03/24/2019 21:50:21 PAGE 4   
 
  178          {
  179   1        if(TIMER_0 == timerx){

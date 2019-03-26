@@ -111,7 +111,7 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 		#endif
 	}
 	if(GPIO == GPIO_P6)
-	{
+	{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 		if(GPIOx->Mode == GPIO_PullUp)		P6M1 &= ~GPIOx->Pin,	P6M0 &= ~GPIOx->Pin;	 //上拉准双向口
 		if(GPIOx->Mode == GPIO_HighZ)		P6M1 |=  GPIOx->Pin,	P6M0 &= ~GPIOx->Pin;	 //浮空输入
 		if(GPIOx->Mode == GPIO_OUT_OD)		P6M1 |=  GPIOx->Pin,	P6M0 |=  GPIOx->Pin;	 //开漏输出
@@ -142,7 +142,8 @@ static uint8	GPIO_Inilize(uint8 GPIO, GPIO_InitTypeDef *GPIOx)
 void HW_GPIO_config(uint8 pin, PIN_MODE mode)
 {
 	GPIO_InitTypeDef	GPIO_InitStructure;				//结构定义
-	GPIO_InitStructure.Pin            = pin%8;	//指定要设置的端口		Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
+	pin  = 1 << pin%8;
+	GPIO_InitStructure.Pin            = pin;	//指定要设置的端口		Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 	GPIO_InitStructure.PullUp_3K7     = 0;				//内部上拉3.7K电阻, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 	GPIO_InitStructure.SchmittDisable = 0;				//禁止施密特输入, Pin0~Pin7或PinAll, 多个项用或操作, 比如 Pin0 | Pin3
 	

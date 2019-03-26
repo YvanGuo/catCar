@@ -25,6 +25,8 @@ typedef unsigned short uint16;
 
 /*********************************************************/
 //#include <reg51.h>
+#include <rtx51tny.h>
+
 #define MAIN_Fosc		24000000L	//定义主时钟
 
 #include	"boards/51/STC8xxxx/STC8xxxx.H"
@@ -63,15 +65,15 @@ typedef unsigned short uint16;
 	pinMode_common(LED_PIN, OUTPUT);
 	digitalWrite_common(LED_PIN, HIGH);
 */
-#define MOTOR_LEFT_PIN_LEFT 1
-#define MOTOR_LEFT_PIN_RIGHT 2
-#define MOTOR_RIGHT_PIN_LEFT 3
-#define MOTOR_RIGHT_PIN_RIGHT 4
+#define MOTOR_LEFT_PIN_LEFT 28 // p3.4
+#define MOTOR_LEFT_PIN_RIGHT 29 // p3.5
+#define MOTOR_RIGHT_PIN_LEFT 30 // p3.6
+#define MOTOR_RIGHT_PIN_RIGHT 31 // p3.7
 
-#define LEFT_IR_PIN 5
-#define RIGHT_IR_PIN 6
+#define LEFT_IR_PIN 10 // p1.2
+#define RIGHT_IR_PIN 11 // p1.3
 
-#define SERVO_CTL_PIN 7
+#define SERVO_CTL_PIN 12 // p1.4
 
 #define LED_CTL_PIN 8
 //--------------------------------------------
@@ -83,6 +85,7 @@ typedef unsigned short uint16;
 #define   MAIN_Fosc	  22118400L
 
 #include	"boards/51/STC15xxxx/STC15Fxxxx.H"
+#include <rtx51tny.h>
 
 /////////////////// pin config ///////////////
 #define	GPIO_PullUp		0	//上拉准双向口
@@ -117,32 +120,19 @@ typedef unsigned short uint16;
 	pinMode_common(LED_PIN, OUTPUT);
 	digitalWrite_common(LED_PIN, HIGH);
 */
-#define MOTOR_LEFT_PIN_LEFT 1
-#define MOTOR_LEFT_PIN_RIGHT 2
-#define MOTOR_RIGHT_PIN_LEFT 3
-#define MOTOR_RIGHT_PIN_RIGHT 4
+#define MOTOR_LEFT_PIN_LEFT 11
+#define MOTOR_LEFT_PIN_RIGHT 12
+#define MOTOR_RIGHT_PIN_LEFT 13
+#define MOTOR_RIGHT_PIN_RIGHT 14
 
-#define LEFT_IR_PIN 5
-#define RIGHT_IR_PIN 6
+#define LEFT_IR_PIN 26 // p3.2
+#define RIGHT_IR_PIN 10
 
-#define SERVO_CTL_PIN 8
+#define SERVO_CTL_PIN 12 // p1.4
 
 #define LED_CTL_PIN 8
 //--------------------------------------------
 
-#else
-
-/////////////////// pin config ///////////////
-#define MOTOR_LEFT_PIN_LEFT 1
-#define MOTOR_LEFT_PIN_RIGHT 2
-#define MOTOR_RIGHT_PIN_LEFT 3
-#define MOTOR_RIGHT_PIN_RIGHT 4
-
-#define LEFT_IR_PIN 5
-#define RIGHT_IR_PIN 6
-
-#define SERVO_CTL_PIN 7
-//--------------------------------------------
 #endif
 
 #define NULL (0)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/24/2019 21:50:22 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_TIMER
@@ -62,7 +62,7 @@ line level    source
   52            uint8 TIM_Run;    //是否运行    ENABLE,DISABLE
   53          } TIM_InitTypeDef;
   54          
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 2   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/24/2019 21:50:22 PAGE 2   
 
   55          
   56          /********************* Timer0中断函数************************/
@@ -70,8 +70,8 @@ line level    source
   58          {
   59   1      
   60   1        //printf("in Time0_Int tttt \r\n");
-  61   1        //ServoPwmInterruptProc(0);
-  62   1        timerCbFunExce(TIMER_0);
+  61   1        ServoPwmInterruptProc(0);
+  62   1        //timerCbFunExce(TIMER_0);
   63   1        
   64   1      }
   65          
@@ -126,7 +126,7 @@ line level    source
  114   2           // queue empty
  115   2           return;
  116   2        }
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 3   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/24/2019 21:50:22 PAGE 3   
 
  117   1        
  118   1        timerCbFunExce(TIMER_4);
@@ -190,7 +190,7 @@ line level    source
  175   2          if(TIMx->TIM_Run == ENABLE) TR1 = 1;  //开始运行
  176   2          return  0;    //成功
  177   2        }
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 4   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/24/2019 21:50:22 PAGE 4   
 
  178   1      
  179   1        if(TIM == TIMER_2)    //Timer2,固定为16位自动重装, 中断无优先级
@@ -254,7 +254,7 @@ line level    source
                 TIM_InitStructure.TIM_ClkOut    = ENABLE;       //是否输出高速脉冲, ENABLE或DISABLE
                 TIM_InitStructure.TIM_Value     = 65536UL - (MAIN_Fosc / 1000UL); //初值,
                 TIM_InitStructure.TIM_Run       = ENABLE;       //是否初始化后启动定时器, ENABLE或DISABLE
-C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/17/2019 22:27:45 PAGE 5   
+C51 COMPILER V9.56.0.0   HW_TIMER                                                          03/24/2019 21:50:22 PAGE 5   
 
                 ret = Timer_Inilize(TIMER_1,&TIM_InitStructure);        //初始化Timer1    Timer0,Timer1,Timer2
                 #endif

@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 22:26:02 PAGE 1   
+C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/24/2019 21:50:21 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SERVOCOMMON
@@ -62,7 +62,7 @@ line level    source
   52   1        
   53   1        pulseWidth = 5+angle/9;
   54   1        
-C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 22:26:02 PAGE 2   
+C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/24/2019 21:50:21 PAGE 2   
 
   55   1        setServoPulseWidth(pulseWidth);
   56   1      }
@@ -126,7 +126,7 @@ line level    source
  113   1        setServoCtlPin(G_ServoCfg.pin);
  114   1        timerRegist(TIMER_0, 1, ServoPwmInterruptProc);
  115   1        return 0;
-C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/17/2019 22:26:02 PAGE 3   
+C51 COMPILER V9.56.0.0   SERVOCOMMON                                                       03/24/2019 21:50:21 PAGE 3   
 
  116   1      }
  117          

@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   HW_PWM                                                            03/17/2019 22:30:39 PAGE 1   
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/24/2019 22:53:31 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HW_PWM
@@ -62,7 +62,7 @@ line level    source
   52   1        timeCnt++;
   53   1      
   54   1        if(timeCnt > 10000){
-C51 COMPILER V9.56.0.0   HW_PWM                                                            03/17/2019 22:30:39 PAGE 2   
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/24/2019 22:53:31 PAGE 2   
 
   55   2        
   56   2          //digitalWrite_common(G_ServoCtlPin, LOW);
@@ -126,7 +126,7 @@ line level    source
  113   4              
  114   4                servoPulseWidth = 5;
  115   4                setServoPulseWidth(servoPulseWidth);
-C51 COMPILER V9.56.0.0   HW_PWM                                                            03/17/2019 22:30:39 PAGE 3   
+C51 COMPILER V9.56.0.0   HW_PWM                                                            03/24/2019 22:53:31 PAGE 3   
 
  116   4              }
  117   3              resetServoPulCnt();

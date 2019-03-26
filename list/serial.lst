@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   SERIAL                                                            03/17/2019 22:24:23 PAGE 1   
+C51 COMPILER V9.56.0.0   SERIAL                                                            03/24/2019 21:50:21 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SERIAL
@@ -62,7 +62,7 @@ line level    source
   52          int8 initSeriaX(SERIA_X seriaIndex, s_SeriaParam *param)
   53          {
   54   1        return 0;
-C51 COMPILER V9.56.0.0   SERIAL                                                            03/17/2019 22:24:23 PAGE 2   
+C51 COMPILER V9.56.0.0   SERIAL                                                            03/24/2019 21:50:21 PAGE 2   
 
   55   1      }
 *** WARNING C280 IN LINE 52 OF hal\serial.c: 'seriaIndex': unreferenced local variable
